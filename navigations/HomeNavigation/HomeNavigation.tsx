@@ -19,7 +19,7 @@ const HomeNavigation: React.FC = () => {
         name="Subjects"
         component={SubjectsScreen}
         options={{
-          title: "科目一覧",
+          title: "分野一覧",
         }}
         data-test="screen"
       />
