@@ -33,6 +33,14 @@ const QuestionScreen: React.FC = () => {
     setShowAnswer((state) => !state);
   };
 
+  const onSpeech = () => {
+    const uttr = new SpeechSynthesisUtterance(
+      showAnswer ? (question.answer as string) : (question.question as string)
+    );
+    uttr.lang = "en-US";
+    speechSynthesis.speak(uttr);
+  };
+
   if (question.loading) {
     return <Spinner width={40} height={40} />;
   }
@@ -42,6 +50,7 @@ const QuestionScreen: React.FC = () => {
       <HeaderController
         subject={subjectName}
         grade={question.grade as number}
+        onSpeech={onSpeech}
       />
       <View style={styles.questionContainer}>
         <Text style={styles.question}>
@@ -66,7 +75,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flex: 8,
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
   },
   question: {
     fontWeight: "bold",

@@ -10,6 +10,7 @@ import * as questionActions from "../../store/actions/question";
 type Props = {
   subject: string;
   grade: number;
+  onSpeech: () => void;
 };
 
 const HeaderController: React.FC<Props> = (props) => {
@@ -43,6 +44,8 @@ const HeaderController: React.FC<Props> = (props) => {
       <TouchableOpacity
         style={styles.playButton}
         activeOpacity={0.7}
+        disabled={!("speechSynthesis" in window)}
+        onPress={props.onSpeech}
         data-test="play-button"
       >
         <Ionicons
