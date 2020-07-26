@@ -12,6 +12,8 @@ import * as subjectsActions from "../../store/actions/subjects";
 import { Subjects, Grades } from "../../store/reducers/subjectsReducer";
 import Colors from "../../constants/Colors";
 import Spinner from "../../components/Spinner";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../../navigations/HomeNavigation/HomeNavigation";
 
 const getTotalGrades = (grades: Grades) => {
   const totalGrade = grades.reduce((total, grade) => {
@@ -23,7 +25,11 @@ const getTotalGrades = (grades: Grades) => {
   return `${totalGrade.solvable}/${totalGrade.all}問`;
 };
 
-const SubjectsScreen: React.FC = () => {
+type Props = {
+  navigation?: StackNavigationProp<RootStackParamList, "Detail">;
+};
+
+const SubjectsScreen: React.FC<Props> = (props) => {
   const dispatch = useDispatch();
   const subjects = useSelector(
     (state: { subjects: { subjects: Subjects } }) => state.subjects.subjects
@@ -47,7 +53,7 @@ const SubjectsScreen: React.FC = () => {
           key={i}
           style={styles.container}
           activeOpacity={0.7}
-          onPress={() => {}}
+          onPress={() => props.navigation!.navigate("Detail")}
         >
           <View style={styles.titleContaier}>
             <Text numberOfLines={1} style={styles.title}>

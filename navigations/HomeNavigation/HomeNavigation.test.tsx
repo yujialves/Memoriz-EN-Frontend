@@ -13,9 +13,9 @@ const setup = () => {
 };
 
 describe("HomeNavigation", () => {
-  test("スクリーンが一つレンダリングされている", () => {
+  test("スクリーンが二つレンダリングされている", () => {
     const wrapper = setup();
     const screens = findByTestAttr(wrapper, "screen");
-    expect(screens.length).toBe(1);
+    expect(screens.length).toBe(2);
   });
 });
