@@ -1,15 +1,31 @@
 import React from "react";
-import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 import Chart from "react-apexcharts";
 import options from "../../options/chartOption";
+import { Subjects } from "../../store/reducers/subjectsReducer";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../../navigations/HomeNavigation/HomeNavigation";
+import { useSelector } from "react-redux";
+import { RouteProp } from "@react-navigation/native";
 
-const DetailScreen: React.FC = () => {
+type Props = {
+  navigation?: StackNavigationProp<RootStackParamList, "Detail">;
+  route?: RouteProp<RootStackParamList, "Detail">;
+};
+
+const DetailScreen: React.FC<Props> = (props) => {
+  const grades = useSelector(
+    (state: { subjects: { subjects: Subjects } }) => state.subjects.subjects
+  ).filter((subject) => {
+    return subject.subject_id === props.route!.params.subject_id;
+  })[0].grades;
+
   const series = [
     {
-      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      data: grades.map((grade) => grade.solvable),
     },
     {
-      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      data: grades.map((grade) => grade.all - grade.solvable),
     },
   ];
   return (
