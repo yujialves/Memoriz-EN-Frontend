@@ -1,12 +1,22 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import Colors from "../../Memoriz-EN-Frontend/constants/Colors";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../../Memoriz-EN-Frontend/navigations/HomeNavigation/HomeNavigation";
+import { useDispatch } from "react-redux";
+import { setStarted } from "../../store/actions/start";
 
-const StartButton: React.FC = () => {
+type Props = {
+  navigation?: StackNavigationProp<RootStackParamList, "Detail">;
+};
+
+const StartButton: React.FC<Props> = (props) => {
+  const dispatch = useDispatch();
   return (
     <TouchableOpacity
       activeOpacity={0.7}
       style={styles.container}
+      onPress={() => dispatch(setStarted(true))}
       data-test="button"
     >
       <Text style={styles.text} data-test="text">

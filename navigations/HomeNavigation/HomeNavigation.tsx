@@ -3,6 +3,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import SubjectsScreen from "../../screens/SubjectsScreen/SubjectsScreen";
 import Colors from "../../constants/Colors";
 import DetailScreen from "../../screens/DetailScreen/DetailScreen";
+import { useSelector } from "react-redux";
+import QuestionScreen from "../../screens/QuestionScreen/QuestionScreen";
 
 const StackNavigator = createStackNavigator();
 
@@ -12,6 +14,14 @@ export type RootStackParamList = {
 };
 
 const HomeNavigation: React.FC = () => {
+  const started = useSelector(
+    (state: { start: { started: boolean } }) => state.start.started
+  );
+
+  if (started) {
+    return <QuestionScreen />;
+  }
+
   return (
     <StackNavigator.Navigator
       screenOptions={{
