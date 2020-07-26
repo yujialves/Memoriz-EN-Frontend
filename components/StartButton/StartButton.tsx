@@ -8,15 +8,17 @@ import { setStarted } from "../../store/actions/start";
 
 type Props = {
   navigation?: StackNavigationProp<RootStackParamList, "Detail">;
+  subjectId: number;
 };
 
 const StartButton: React.FC<Props> = (props) => {
   const dispatch = useDispatch();
+
   return (
     <TouchableOpacity
       activeOpacity={0.7}
       style={styles.container}
-      onPress={() => dispatch(setStarted(true))}
+      onPress={() => dispatch(setStarted(true, props.subjectId))}
       data-test="button"
     >
       <Text style={styles.text} data-test="text">

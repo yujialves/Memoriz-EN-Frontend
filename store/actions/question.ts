@@ -9,15 +9,17 @@ type Response = {
   data: { question: Question };
 };
 
-export const getSubjects = (subject_id: number) => {
+export const getQuestion = (subjectId: number) => {
   return async (dispatch: Dispatch) => {
-    const response: Response = await axios.post(baseURL + "question", {
-      subject_id,
-    });
+    const response: Response = await axios.post(
+      baseURL + "question",
+      JSON.stringify({ subjectId })
+    );
     return dispatch(
       setQuestion({
         question: response.data.question.question,
         answer: response.data.question.answer,
+        grade: response.data.question.grade,
       })
     );
   };
@@ -28,5 +30,6 @@ const setQuestion = (question: Question) => {
     type: actionTypes.SET_QUESTION,
     question: question.question,
     answer: question.answer,
+    grade: question.grade,
   };
 };

@@ -2,18 +2,24 @@ import * as actionTypes from "../actions/actionTypes";
 
 type Action = {
   type: string;
-  question: "";
-  answer: "";
+  question: string;
+  answer: string;
+  grade: number;
+  loading: boolean;
 };
 
 export type Question = {
   question: string | null;
   answer: string | null;
+  grade: number | null;
+  loading?: boolean
 };
 
 const initialState: Question = {
   question: "",
   answer: "",
+  grade: null,
+  loading: true,
 };
 
 const subjectsReducer = (state = initialState, action: Action) => {
@@ -22,7 +28,14 @@ const subjectsReducer = (state = initialState, action: Action) => {
       return {
         question: action.question,
         answer: action.answer,
+        grade: action.grade,
+        loading: false
       };
+    case actionTypes.SET_QUESTION_LOADING:
+        return {
+            ...state,
+            loading: action.loading
+        }
   }
   return state;
 };

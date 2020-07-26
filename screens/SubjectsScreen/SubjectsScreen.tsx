@@ -53,11 +53,11 @@ const SubjectsScreen: React.FC<Props> = (props) => {
           key={i}
           style={styles.container}
           activeOpacity={0.7}
-          onPress={() =>
+          onPress={() => {
             props.navigation!.navigate("Detail", {
-              subject_id: subject.subject_id,
-            })
-          }
+              subjectId: subject.subjectId,
+            });
+          }}
         >
           <View style={styles.titleContaier}>
             <Text numberOfLines={1} style={styles.title}>

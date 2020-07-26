@@ -10,7 +10,7 @@ import store from "../../App";
  * @returns {ShallowWrapper}
  */
 const setup = () => {
-  return shallow(<HeaderController subject="test" grade="G100" />);
+  return shallow(<HeaderController subject="test" grade={100} />);
 };
 
 describe("HeaderController", () => {

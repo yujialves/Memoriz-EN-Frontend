@@ -10,7 +10,7 @@ const StackNavigator = createStackNavigator();
 
 export type RootStackParamList = {
   Subjects: undefined;
-  Detail: { subject_id: number };
+  Detail: { subjectId: number };
 };
 
 const HomeNavigation: React.FC = () => {

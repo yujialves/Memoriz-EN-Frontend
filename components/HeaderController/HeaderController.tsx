@@ -5,7 +5,7 @@ import Colors from "../../constants/Colors";
 
 type Props = {
   subject: string;
-  grade: string;
+  grade: number;
 };
 
 const HeaderController: React.FC<Props> = (props) => {
@@ -13,7 +13,7 @@ const HeaderController: React.FC<Props> = (props) => {
     <View style={styles.headerContainer}>
       <View style={styles.header}>
         <Text style={styles.subject} data-test="subject">
-          {props.subject}: {props.grade}
+          {props.subject}: G{props.grade}
         </Text>
         <TouchableOpacity
           style={styles.endButton}

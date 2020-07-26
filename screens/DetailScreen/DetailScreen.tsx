@@ -20,7 +20,7 @@ const DetailScreen: React.FC<Props> = (props) => {
   const grades = useSelector(
     (state: { subjects: { subjects: Subjects } }) => state.subjects.subjects
   ).filter((subject) => {
-    return subject.subject_id === props.route!.params.subject_id;
+    return subject.subjectId === props.route!.params.subjectId;
   })[0].grades;
 
   const series = [
@@ -44,7 +44,7 @@ const DetailScreen: React.FC<Props> = (props) => {
       </View>
       <GradesTransitionView gradeDown={10} gradeUp={20} />
       <View style={styles.buttonContainer}>
-        <StartButton />
+        <StartButton subjectId={props.route!.params.subjectId} />
       </View>
     </View>
   );
