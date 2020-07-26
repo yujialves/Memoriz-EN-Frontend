@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flex: 8,
+    paddingHorizontal: 4
   },
   question: {
     fontWeight: "bold",

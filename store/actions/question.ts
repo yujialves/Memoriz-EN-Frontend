@@ -25,7 +25,7 @@ export const getQuestion = (subjectId: number) => {
   };
 };
 
-const setQuestion = (question: Question) => {
+export const setQuestion = (question: Question) => {
   return {
     type: actionTypes.SET_QUESTION,
     question: question.question,

@@ -2,6 +2,10 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../constants/Colors";
+import { useDispatch } from "react-redux";
+import * as subjectsActions from "../../store/actions/subjects";
+import * as startActions from "../../store/actions/start";
+import * as questionActions from "../../store/actions/question";
 
 type Props = {
   subject: string;
@@ -9,6 +13,16 @@ type Props = {
 };
 
 const HeaderController: React.FC<Props> = (props) => {
+  const dispatch = useDispatch();
+
+  const endButtonHandler = () => {
+    dispatch(subjectsActions.getSubjects());
+    dispatch(
+      questionActions.setQuestion({ question: null, answer: null, grade: null })
+    );
+    dispatch(startActions.setStarted(false, 0));
+  };
+
   return (
     <View style={styles.headerContainer}>
       <View style={styles.header}>
@@ -18,6 +32,7 @@ const HeaderController: React.FC<Props> = (props) => {
         <TouchableOpacity
           style={styles.endButton}
           activeOpacity={0.7}
+          onPress={endButtonHandler}
           data-test="end-button"
         >
           <Text style={styles.endText} data-test="end-text">
