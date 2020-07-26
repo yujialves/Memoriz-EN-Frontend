@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions, Text } from "react-native";
 import Chart from "react-apexcharts";
 import options from "../../options/chartOption";
 import { Subjects } from "../../store/reducers/subjectsReducer";
@@ -7,6 +7,8 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigations/HomeNavigation/HomeNavigation";
 import { useSelector } from "react-redux";
 import { RouteProp } from "@react-navigation/native";
+import Colors from "../../constants/Colors";
+import GradesTransitionView from "../../components/GradesTransitionView/GradesTransitionView";
 
 type Props = {
   navigation?: StackNavigationProp<RootStackParamList, "Detail">;
@@ -36,9 +38,10 @@ const DetailScreen: React.FC<Props> = (props) => {
           series={series}
           type="bar"
           width="100%"
-          height={Dimensions.get("window").width}
+          height={Dimensions.get("window").width * 0.9}
         />
       </View>
+      <GradesTransitionView gradeDown={10} gradeUp={20} />
     </View>
   );
 };

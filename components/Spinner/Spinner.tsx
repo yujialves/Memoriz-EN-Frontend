@@ -11,7 +11,7 @@ const Spinner: React.FC<Props> = (props) => {
     <View style={styles.container}>
       <Image
         style={{ height: props.height, width: props.width }}
-        source={require("../assets/spinner.gif")}
+        source={require("../../assets/spinner.gif")}
         data-test="spinner"
       />
     </View>
