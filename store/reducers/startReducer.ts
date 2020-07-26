@@ -6,7 +6,7 @@ type Action = {
 };
 
 const initialState = {
-  started: false,
+  started: true,
 };
 
 const startReducer = (state = initialState, action: Action) => {
