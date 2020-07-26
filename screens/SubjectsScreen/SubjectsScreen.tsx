@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import * as subjectsActions from "../../store/actions/subjects";
 import { Subjects, Grades } from "../../store/reducers/subjectsReducer";
 import Colors from "../../constants/Colors";
-import Spinner from "../../components/Spinner";
+import Spinner from '../../components/Spinner/Spinner'
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigations/HomeNavigation/HomeNavigation";
 

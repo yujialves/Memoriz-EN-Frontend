@@ -1,5 +1,5 @@
 import React from "react";
-import { findByTestAttr } from "../utils/testUtils";
+import { findByTestAttr } from "../../utils/testUtils";
 import { shallow } from "enzyme";
 import Spinner from "./Spinner";
 
