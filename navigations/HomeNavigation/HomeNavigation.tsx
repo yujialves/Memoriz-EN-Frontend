@@ -2,8 +2,14 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import SubjectsScreen from "../../screens/SubjectsScreen/SubjectsScreen";
 import Colors from "../../constants/Colors";
+import DetailScreen from "../../screens/DetailScreen/DetailScreen";
 
 const StackNavigator = createStackNavigator();
+
+export type RootStackParamList = {
+  Subjects: undefined;
+  Detail: { subject_id: number };
+};
 
 const HomeNavigation: React.FC = () => {
   return (
@@ -19,8 +25,14 @@ const HomeNavigation: React.FC = () => {
         name="Subjects"
         component={SubjectsScreen}
         options={{
-          title: "科目一覧",
+          title: "分野一覧",
         }}
+        data-test="screen"
+      />
+      <StackNavigator.Screen
+        name="Detail"
+        component={DetailScreen}
+        options={{ title: "詳細" }}
         data-test="screen"
       />
     </StackNavigator.Navigator>

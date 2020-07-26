@@ -3,10 +3,12 @@ import * as actionTypes from "../actions/actionTypes";
 export type Subjects = Array<{
   subject_id: number;
   name: string;
-  grades: Array<{
-    solvable: number;
-    all: number;
-  }>;
+  grades: Grades;
+}>;
+
+export type Grades = Array<{
+  solvable: number;
+  all: number;
 }>;
 
 type Action = {
