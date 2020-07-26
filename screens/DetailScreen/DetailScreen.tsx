@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { RouteProp } from "@react-navigation/native";
 import Colors from "../../constants/Colors";
 import GradesTransitionView from "../../components/GradesTransitionView/GradesTransitionView";
+import StartButton from "../../components/StartButton/StartButton";
 
 type Props = {
   navigation?: StackNavigationProp<RootStackParamList, "Detail">;
@@ -42,6 +43,9 @@ const DetailScreen: React.FC<Props> = (props) => {
         />
       </View>
       <GradesTransitionView gradeDown={10} gradeUp={20} />
+      <View style={styles.buttonContainer}>
+        <StartButton />
+      </View>
     </View>
   );
 };
@@ -49,9 +53,14 @@ const DetailScreen: React.FC<Props> = (props) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+    backgroundColor: "white",
   },
   chartContainer: {
     paddingRight: 20,
+  },
+  buttonContainer: {
+    paddingTop: 40,
+    alignItems: "center",
   },
 });
 
