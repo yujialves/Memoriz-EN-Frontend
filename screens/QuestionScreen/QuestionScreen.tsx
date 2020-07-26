@@ -1,10 +1,15 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useEffect } from "react";
+import { View, StyleSheet } from "react-native";
+import HeaderController from "../../components/HeaderController/HeaderController";
+import { useDispatch } from "react-redux";
 
 const QuestionScreen: React.FC = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {}, [dispatch]);
   return (
     <View style={styles.screen}>
-      <Text>QuestionScreen</Text>
+      <HeaderController subject="aaaaaa" grade="G100" />
+      <View>{}</View>
     </View>
   );
 };
