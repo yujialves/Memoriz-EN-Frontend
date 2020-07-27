@@ -38,6 +38,16 @@ const QuestionScreen: React.FC = () => {
     speechSynthesis.speak(uttr);
   };
 
+  const onCorrect = () => {
+    setShowAnswer(false);
+    dispatch(questionActions.correctAnwer(question.id as number, subjectId));
+  };
+
+  const onInCorrect = () => {
+    setShowAnswer(false);
+    dispatch(questionActions.inCorrectAnwer(question.id as number, subjectId));
+  };
+
   if (question.loading) {
     return <Spinner width={40} height={40} />;
   }
@@ -64,16 +74,8 @@ const QuestionScreen: React.FC = () => {
           <BottomController
             showAnswer={showAnswer}
             onShow={() => setShowAnswer((state) => !state)}
-            onCorrect={() =>
-              dispatch(
-                questionActions.correctAnwer(question.id as number, subjectId)
-              )
-            }
-            onInCorrect={() =>
-              dispatch(
-                questionActions.inCorrectAnwer(question.id as number, subjectId)
-              )
-            }
+            onCorrect={onCorrect}
+            onInCorrect={onInCorrect}
           />
         </View>
       )}
