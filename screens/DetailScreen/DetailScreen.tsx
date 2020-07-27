@@ -17,18 +17,18 @@ type Props = {
 };
 
 const DetailScreen: React.FC<Props> = (props) => {
-  const grades = useSelector(
+  const subject = useSelector(
     (state: { subjects: { subjects: Subjects } }) => state.subjects.subjects
   ).filter((subject) => {
     return subject.subjectId === props.route!.params.subjectId;
-  })[0].grades;
+  })[0];
 
   const series = [
     {
-      data: grades.map((grade) => grade.solvable),
+      data: subject.grades.map((grade) => grade.solvable),
     },
     {
-      data: grades.map((grade) => grade.all - grade.solvable),
+      data: subject.grades.map((grade) => grade.all - grade.solvable),
     },
   ];
   return (
@@ -42,7 +42,10 @@ const DetailScreen: React.FC<Props> = (props) => {
           height={Dimensions.get("window").width * 0.9}
         />
       </View>
-      <GradesTransitionView gradeDown={10} gradeUp={20} />
+      <GradesTransitionView
+        gradeDown={subject.inCorrectCount}
+        gradeUp={subject.correctCount}
+      />
       <View style={styles.buttonContainer}>
         <StartButton subjectId={props.route!.params.subjectId} />
       </View>

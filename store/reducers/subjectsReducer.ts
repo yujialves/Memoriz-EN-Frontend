@@ -4,6 +4,8 @@ export type Subjects = Array<{
   subjectId: number;
   name: string;
   grades: Grades;
+  correctCount: number;
+  inCorrectCount: number;
 }>;
 
 export type Grades = Array<{
