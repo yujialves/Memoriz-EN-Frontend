@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   questionContainer: {
     justifyContent: "center",
     alignItems: "center",
-    flex: 11,
+    flex: 13,
     paddingHorizontal: 4,
   },
   question: {
