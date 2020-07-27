@@ -1,9 +1,11 @@
 import * as actionTypes from "../actions/actionTypes";
 
 export type Subjects = Array<{
-  subject_id: number;
+  subjectId: number;
   name: string;
   grades: Grades;
+  correctCount: number;
+  inCorrectCount: number;
 }>;
 
 export type Grades = Array<{

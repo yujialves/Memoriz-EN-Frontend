@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { RouteProp } from "@react-navigation/native";
 import Colors from "../../constants/Colors";
 import GradesTransitionView from "../../components/GradesTransitionView/GradesTransitionView";
+import StartButton from "../../components/StartButton/StartButton";
 
 type Props = {
   navigation?: StackNavigationProp<RootStackParamList, "Detail">;
@@ -16,18 +17,18 @@ type Props = {
 };
 
 const DetailScreen: React.FC<Props> = (props) => {
-  const grades = useSelector(
+  const subject = useSelector(
     (state: { subjects: { subjects: Subjects } }) => state.subjects.subjects
   ).filter((subject) => {
-    return subject.subject_id === props.route!.params.subject_id;
-  })[0].grades;
+    return subject.subjectId === props.route!.params.subjectId;
+  })[0];
 
   const series = [
     {
-      data: grades.map((grade) => grade.solvable),
+      data: subject.grades.map((grade) => grade.solvable),
     },
     {
-      data: grades.map((grade) => grade.all - grade.solvable),
+      data: subject.grades.map((grade) => grade.all - grade.solvable),
     },
   ];
   return (
@@ -41,7 +42,13 @@ const DetailScreen: React.FC<Props> = (props) => {
           height={Dimensions.get("window").width * 0.9}
         />
       </View>
-      <GradesTransitionView gradeDown={10} gradeUp={20} />
+      <GradesTransitionView
+        gradeDown={subject.inCorrectCount}
+        gradeUp={subject.correctCount}
+      />
+      <View style={styles.buttonContainer}>
+        <StartButton subjectId={props.route!.params.subjectId} />
+      </View>
     </View>
   );
 };
@@ -49,9 +56,14 @@ const DetailScreen: React.FC<Props> = (props) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+    backgroundColor: "white",
   },
   chartContainer: {
     paddingRight: 20,
+  },
+  buttonContainer: {
+    paddingTop: 40,
+    alignItems: "center",
   },
 });
 
