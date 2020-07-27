@@ -27,8 +27,10 @@ const HomeNavigation: React.FC = () => {
       screenOptions={{
         headerStyle: {
           backgroundColor: Colors.primary,
+          height: 44
         },
         headerTintColor: Colors.tintColor,
+        
       }}
     >
       <StackNavigator.Screen

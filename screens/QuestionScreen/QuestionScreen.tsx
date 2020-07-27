@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, SafeAreaView } from "react-native";
 import HeaderController from "../../components/HeaderController/HeaderController";
 import { useDispatch, useSelector } from "react-redux";
 import { getQuestion } from "../../store/actions/question";
@@ -43,7 +43,7 @@ const QuestionScreen: React.FC = () => {
   }
 
   return (
-    <View style={styles.screen}>
+    <SafeAreaView style={styles.screen}>
       <HeaderController
         subject={subject.name}
         grade={question.grade as number}
@@ -77,7 +77,7 @@ const QuestionScreen: React.FC = () => {
           />
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
