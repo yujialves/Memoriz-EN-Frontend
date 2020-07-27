@@ -9,6 +9,42 @@ type Response = {
   data: { question: Question };
 };
 
+export const inCorrectAnwer = (questionId: number, subjectId: number) => {
+  return async (dispatch: Dispatch) => {
+    // レスポンスとして新しい問題を得る
+    const response: Response = await axios.post(
+      baseURL + "question/incorrect",
+      JSON.stringify({ questionId, subjectId })
+    );
+    return dispatch(
+      setQuestion({
+        id: response.data.question.id,
+        question: response.data.question.question,
+        answer: response.data.question.answer,
+        grade: response.data.question.grade,
+      })
+    );
+  };
+};
+
+export const correctAnwer = (questionId: number, subjectId: number) => {
+  return async (dispatch: Dispatch) => {
+    // レスポンスとして新しい問題を得る
+    const response: Response = await axios.post(
+      baseURL + "question/correct",
+      JSON.stringify({ questionId, subjectId })
+    );
+    return dispatch(
+      setQuestion({
+        id: response.data.question.id,
+        question: response.data.question.question,
+        answer: response.data.question.answer,
+        grade: response.data.question.grade,
+      })
+    );
+  };
+};
+
 export const getQuestion = (subjectId: number) => {
   return async (dispatch: Dispatch) => {
     const response: Response = await axios.post(

@@ -8,6 +8,7 @@ import { Question } from "../../store/reducers/questionReducer";
 import Spinner from "../../components/Spinner/Spinner";
 import Colors from "../../constants/Colors";
 import BottomController from "../../components/BottomController/BottomController";
+import * as questionActions from "../../store/actions/question";
 
 const QuestionScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -28,10 +29,6 @@ const QuestionScreen: React.FC = () => {
   useEffect(() => {
     dispatch(getQuestion(subjectId));
   }, [dispatch]);
-
-  const onToggleQuestion = () => {
-    setShowAnswer((state) => !state);
-  };
 
   const onSpeech = () => {
     const uttr = new SpeechSynthesisUtterance(
@@ -60,7 +57,17 @@ const QuestionScreen: React.FC = () => {
       <View style={styles.bottomContainer}>
         <BottomController
           showAnswer={showAnswer}
-          onPressShowButton={onToggleQuestion}
+          onShow={() => setShowAnswer((state) => !state)}
+          onCorrect={() =>
+            dispatch(
+              questionActions.correctAnwer(question.id as number, subjectId)
+            )
+          }
+          onInCorrect={() =>
+            dispatch(
+              questionActions.inCorrectAnwer(question.id as number, subjectId)
+            )
+          }
         />
       </View>
     </View>

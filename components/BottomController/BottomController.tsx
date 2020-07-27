@@ -4,7 +4,9 @@ import Colors from "../../constants/Colors";
 
 type Props = {
   showAnswer: boolean;
-  onPressShowButton: () => void;
+  onShow: () => void;
+  onCorrect: () => void;
+  onInCorrect: () => void;
 };
 
 const BottomController: React.FC<Props> = (props) => {
@@ -12,14 +14,14 @@ const BottomController: React.FC<Props> = (props) => {
     <View style={styles.container}>
       <TouchableOpacity
         activeOpacity={0.7}
-        onPress={() => {}}
+        onPress={props.onInCorrect}
         style={styles.inCorrectButton}
       >
         <Text style={styles.buttonTitle}>不正解</Text>
       </TouchableOpacity>
       <TouchableOpacity
         activeOpacity={0.7}
-        onPress={props.onPressShowButton}
+        onPress={props.onShow}
         style={styles.showButton}
       >
         <Text style={styles.buttonTitle}>
@@ -28,7 +30,7 @@ const BottomController: React.FC<Props> = (props) => {
       </TouchableOpacity>
       <TouchableOpacity
         activeOpacity={0.7}
-        onPress={() => {}}
+        onPress={props.onCorrect}
         style={styles.correctButton}
       >
         <Text style={styles.buttonTitle}>正解</Text>
