@@ -3,7 +3,7 @@ import { View, StyleSheet, Text } from "react-native";
 import HeaderController from "../../components/HeaderController/HeaderController";
 import { useDispatch, useSelector } from "react-redux";
 import { getQuestion } from "../../store/actions/question";
-import { Subjects } from "../../Memoriz-EN-Frontend/store/reducers/subjectsReducer";
+import { Subjects } from "../../store/reducers/subjectsReducer";
 import { Question } from "../../store/reducers/questionReducer";
 import Spinner from "../../components/Spinner/Spinner";
 import Colors from "../../constants/Colors";
