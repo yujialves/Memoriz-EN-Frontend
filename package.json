@@ -34,5 +34,6 @@
     "redux-thunk": "^2.3.0",
     "typescript": "~3.9.5"
   },
-  "private": true
+  "private": true,
+  "homepage": "https://www.neph.in/memoriz/en"
 }
