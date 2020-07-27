@@ -39,13 +39,13 @@ const QuestionScreen: React.FC = () => {
   };
 
   const onCorrect = () => {
-    setShowAnswer(false);
     dispatch(questionActions.correctAnwer(question.id as number, subjectId));
+    setShowAnswer(false);
   };
 
   const onInCorrect = () => {
-    setShowAnswer(false);
     dispatch(questionActions.inCorrectAnwer(question.id as number, subjectId));
+    setShowAnswer(false);
   };
 
   if (question.loading) {
