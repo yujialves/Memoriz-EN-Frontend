@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 24,
     color: Colors.boldText,
+    textAlign: "center",
   },
   bottomContainer: {
     flex: 1,
