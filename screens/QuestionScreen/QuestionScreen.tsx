@@ -52,25 +52,31 @@ const QuestionScreen: React.FC = () => {
       />
       <View style={styles.questionContainer}>
         <Text style={styles.question}>
-          {showAnswer ? question.answer : question.question}
+          {question.rest !== 0
+            ? showAnswer
+              ? question.answer
+              : question.question
+            : "終了"}
         </Text>
       </View>
-      <View style={styles.bottomContainer}>
-        <BottomController
-          showAnswer={showAnswer}
-          onShow={() => setShowAnswer((state) => !state)}
-          onCorrect={() =>
-            dispatch(
-              questionActions.correctAnwer(question.id as number, subjectId)
-            )
-          }
-          onInCorrect={() =>
-            dispatch(
-              questionActions.inCorrectAnwer(question.id as number, subjectId)
-            )
-          }
-        />
-      </View>
+      {question.rest !== 0 && (
+        <View style={styles.bottomContainer}>
+          <BottomController
+            showAnswer={showAnswer}
+            onShow={() => setShowAnswer((state) => !state)}
+            onCorrect={() =>
+              dispatch(
+                questionActions.correctAnwer(question.id as number, subjectId)
+              )
+            }
+            onInCorrect={() =>
+              dispatch(
+                questionActions.inCorrectAnwer(question.id as number, subjectId)
+              )
+            }
+          />
+        </View>
+      )}
     </View>
   );
 };
@@ -82,7 +88,7 @@ const styles = StyleSheet.create({
   questionContainer: {
     justifyContent: "center",
     alignItems: "center",
-    flex: 8,
+    flex: 11,
     paddingHorizontal: 4,
   },
   question: {
