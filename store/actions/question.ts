@@ -17,6 +17,7 @@ export const getQuestion = (subjectId: number) => {
     );
     return dispatch(
       setQuestion({
+        id: response.data.question.id,
         question: response.data.question.question,
         answer: response.data.question.answer,
         grade: response.data.question.grade,
@@ -28,6 +29,7 @@ export const getQuestion = (subjectId: number) => {
 export const setQuestion = (question: Question) => {
   return {
     type: actionTypes.SET_QUESTION,
+    id: question.id,
     question: question.question,
     answer: question.answer,
     grade: question.grade,

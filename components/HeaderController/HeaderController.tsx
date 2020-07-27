@@ -19,7 +19,12 @@ const HeaderController: React.FC<Props> = (props) => {
   const endButtonHandler = () => {
     dispatch(subjectsActions.getSubjects());
     dispatch(
-      questionActions.setQuestion({ question: null, answer: null, grade: null })
+      questionActions.setQuestion({
+        id: null,
+        question: "",
+        answer: "",
+        grade: null,
+      })
     );
     dispatch(startActions.setStarted(false, 0));
   };
