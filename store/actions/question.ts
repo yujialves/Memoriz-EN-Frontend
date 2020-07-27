@@ -6,7 +6,7 @@ import { Question } from "../reducers/questionReducer";
 
 type Response = {
   status: number;
-  data: { question: Question };
+  data: { question: Question; rest: number };
 };
 
 export const inCorrectAnwer = (questionId: number, subjectId: number) => {
@@ -22,6 +22,7 @@ export const inCorrectAnwer = (questionId: number, subjectId: number) => {
         question: response.data.question.question,
         answer: response.data.question.answer,
         grade: response.data.question.grade,
+        rest: response.data.rest,
       })
     );
   };
@@ -40,6 +41,7 @@ export const correctAnwer = (questionId: number, subjectId: number) => {
         question: response.data.question.question,
         answer: response.data.question.answer,
         grade: response.data.question.grade,
+        rest: response.data.rest,
       })
     );
   };
@@ -57,6 +59,7 @@ export const getQuestion = (subjectId: number) => {
         question: response.data.question.question,
         answer: response.data.question.answer,
         grade: response.data.question.grade,
+        rest: response.data.rest,
       })
     );
   };
@@ -69,5 +72,6 @@ export const setQuestion = (question: Question) => {
     question: question.question,
     answer: question.answer,
     grade: question.grade,
+    rest: question.rest,
   };
 };

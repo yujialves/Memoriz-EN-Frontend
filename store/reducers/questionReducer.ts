@@ -6,6 +6,7 @@ type Action = {
   question: string;
   answer: string;
   grade: number;
+  rest: number;
   loading: boolean;
 };
 
@@ -14,6 +15,7 @@ export type Question = {
   question: string | null;
   answer: string | null;
   grade: number | null;
+  rest: number | null;
   loading?: boolean;
 };
 
@@ -22,6 +24,7 @@ const initialState: Question = {
   question: "",
   answer: "",
   grade: null,
+  rest: null,
   loading: true,
 };
 
@@ -33,6 +36,7 @@ const subjectsReducer = (state = initialState, action: Action) => {
         question: action.question,
         answer: action.answer,
         grade: action.grade,
+        rest: action.rest,
         loading: false,
       };
     case actionTypes.SET_QUESTION_LOADING:

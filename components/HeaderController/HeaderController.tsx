@@ -10,6 +10,7 @@ import * as questionActions from "../../store/actions/question";
 type Props = {
   subject: string;
   grade: number;
+  rest: number;
   onSpeech: () => void;
 };
 
@@ -24,6 +25,7 @@ const HeaderController: React.FC<Props> = (props) => {
         question: "",
         answer: "",
         grade: null,
+        rest: null,
       })
     );
     dispatch(startActions.setStarted(false, 0));
@@ -32,34 +34,41 @@ const HeaderController: React.FC<Props> = (props) => {
   return (
     <View style={styles.headerContainer}>
       <View style={styles.header}>
-        <Text style={styles.subject} data-test="subject">
-          {props.subject}: G{props.grade}
-        </Text>
-        <TouchableOpacity
-          style={styles.endButton}
-          activeOpacity={0.7}
-          onPress={endButtonHandler}
-          data-test="end-button"
-        >
-          <Text style={styles.endText} data-test="end-text">
-            終了
+        <View style={styles.subjectContainer}>
+          <Text style={styles.subject} data-test="subject">
+            {props.subject}: G{props.grade}
           </Text>
-        </TouchableOpacity>
+          <Text style={styles.subject} data-test="subject">
+            残り{props.rest}問
+          </Text>
+        </View>
+        <View>
+          <TouchableOpacity
+            style={styles.endButton}
+            activeOpacity={0.7}
+            onPress={endButtonHandler}
+            data-test="end-button"
+          >
+            <Text style={styles.endText} data-test="end-text">
+              終了
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.playButton}
+            activeOpacity={0.7}
+            disabled={!("speechSynthesis" in window)}
+            onPress={props.onSpeech}
+            data-test="play-button"
+          >
+            <Ionicons
+              name="ios-musical-note"
+              size={24}
+              color="orange"
+              data-test="icon"
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-      <TouchableOpacity
-        style={styles.playButton}
-        activeOpacity={0.7}
-        disabled={!("speechSynthesis" in window)}
-        onPress={props.onSpeech}
-        data-test="play-button"
-      >
-        <Ionicons
-          name="ios-musical-note"
-          size={24}
-          color="orange"
-          data-test="icon"
-        />
-      </TouchableOpacity>
     </View>
   );
 };
@@ -73,6 +82,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
+  subjectContainer: {},
   subject: {
     color: Colors.boldText,
     fontWeight: "bold",

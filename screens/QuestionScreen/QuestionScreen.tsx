@@ -15,11 +15,11 @@ const QuestionScreen: React.FC = () => {
   const subjectId = useSelector(
     (state: { start: { subjectId: number } }) => state.start.subjectId
   );
-  const subjectName = useSelector(
+  const subject = useSelector(
     (state: { subjects: { subjects: Subjects } }) => state.subjects.subjects
   ).filter((subject) => {
     return subject.subjectId === subjectId;
-  })[0].name;
+  })[0];
   const question = useSelector(
     (state: { question: Question }) => state.question
   );
@@ -45,8 +45,9 @@ const QuestionScreen: React.FC = () => {
   return (
     <View style={styles.screen}>
       <HeaderController
-        subject={subjectName}
+        subject={subject.name}
         grade={question.grade as number}
+        rest={question.rest as number}
         onSpeech={onSpeech}
       />
       <View style={styles.questionContainer}>
