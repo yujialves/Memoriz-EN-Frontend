@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     marginVertical: 12,
     flexDirection: "row",
     shadowColor: "black",
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.1,
     shadowRadius: 8
   },
   titleContaier: {

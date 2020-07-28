@@ -45,6 +45,9 @@ const buttonStyle = {
   height: 40,
   borderWidth: 2,
   borderRadius: 20,
+  shadowColor: 'black',
+  shadowRadius: 8,
+  shadowOpacity: 0.1
 };
 
 const styles = StyleSheet.create({
