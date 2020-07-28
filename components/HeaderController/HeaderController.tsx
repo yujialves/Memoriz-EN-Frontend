@@ -11,6 +11,7 @@ type Props = {
   subject: string;
   grade: number;
   rest: number;
+  disablePlay: boolean;
   onSpeech: () => void;
 };
 
@@ -56,7 +57,7 @@ const HeaderController: React.FC<Props> = (props) => {
           <TouchableOpacity
             style={styles.playButton}
             activeOpacity={0.7}
-            disabled={!("speechSynthesis" in window)}
+            disabled={!("speechSynthesis" in window) || props.disablePlay}
             onPress={props.onSpeech}
             data-test="play-button"
           >
