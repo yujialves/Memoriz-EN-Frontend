@@ -3,6 +3,7 @@ import axios from "axios";
 import { baseURL } from "../../secrets/constants";
 import { Dispatch } from "redux";
 import { Question } from "../reducers/questionReducer";
+import * as loadingsActions from "./loadings";
 
 type Response = {
   status: number;
@@ -11,11 +12,13 @@ type Response = {
 
 export const inCorrectAnwer = (questionId: number, subjectId: number) => {
   return async (dispatch: Dispatch) => {
+    dispatch(loadingsActions.setLoadingQuestion(true));
     // レスポンスとして新しい問題を得る
     const response: Response = await axios.post(
       baseURL + "question/incorrect",
       JSON.stringify({ questionId, subjectId })
     );
+    dispatch(loadingsActions.setLoadingQuestion(false));
     return dispatch(
       setQuestion({
         id: response.data.question.id,
@@ -30,11 +33,13 @@ export const inCorrectAnwer = (questionId: number, subjectId: number) => {
 
 export const correctAnwer = (questionId: number, subjectId: number) => {
   return async (dispatch: Dispatch) => {
+    dispatch(loadingsActions.setLoadingQuestion(true));
     // レスポンスとして新しい問題を得る
     const response: Response = await axios.post(
       baseURL + "question/correct",
       JSON.stringify({ questionId, subjectId })
     );
+    dispatch(loadingsActions.setLoadingQuestion(false));
     return dispatch(
       setQuestion({
         id: response.data.question.id,
@@ -49,10 +54,12 @@ export const correctAnwer = (questionId: number, subjectId: number) => {
 
 export const getQuestion = (subjectId: number) => {
   return async (dispatch: Dispatch) => {
+    dispatch(loadingsActions.setLoadingQuestion(true));
     const response: Response = await axios.post(
       baseURL + "question",
       JSON.stringify({ subjectId })
     );
+    dispatch(loadingsActions.setLoadingQuestion(false));
     return dispatch(
       setQuestion({
         id: response.data.question.id,

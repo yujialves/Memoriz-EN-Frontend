@@ -4,18 +4,22 @@ import Colors from "../../constants/Colors";
 
 type Props = {
   showAnswer: boolean;
+  disabled: boolean;
+  display: boolean;
   onShow: () => void;
   onCorrect: () => void;
   onInCorrect: () => void;
 };
 
 const BottomController: React.FC<Props> = (props) => {
+  if (!props.display) return <View style={styles.container}></View>;
   return (
     <View style={styles.container}>
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={props.onInCorrect}
         style={styles.inCorrectButton}
+        disabled={props.disabled}
       >
         <Text style={styles.buttonTitle}>不正解</Text>
       </TouchableOpacity>
@@ -23,6 +27,7 @@ const BottomController: React.FC<Props> = (props) => {
         activeOpacity={0.7}
         onPress={props.onShow}
         style={styles.showButton}
+        disabled={props.disabled}
       >
         <Text style={styles.buttonTitle}>
           {props.showAnswer ? "問題" : "正解"}を表示
@@ -32,6 +37,7 @@ const BottomController: React.FC<Props> = (props) => {
         activeOpacity={0.7}
         onPress={props.onCorrect}
         style={styles.correctButton}
+        disabled={props.disabled}
       >
         <Text style={styles.buttonTitle}>正解</Text>
       </TouchableOpacity>
@@ -45,16 +51,16 @@ const buttonStyle = {
   height: 40,
   borderWidth: 2,
   borderRadius: 20,
-  shadowColor: 'black',
+  shadowColor: "black",
   shadowRadius: 8,
-  shadowOpacity: 0.1
+  shadowOpacity: 0.1,
 };
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
   },
   inCorrectButton: {
     ...buttonStyle,

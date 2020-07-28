@@ -26,6 +26,7 @@ const subjectsReducer = (state = initialState, action: Action) => {
   switch (action.type) {
     case actionTypes.SET_SUBJECTS:
       return {
+        ...state,
         subjects: action.subjects,
       };
   }

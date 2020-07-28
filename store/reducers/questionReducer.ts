@@ -7,7 +7,6 @@ type Action = {
   answer: string;
   grade: number;
   rest: number;
-  loading: boolean;
 };
 
 export type Question = {
@@ -16,7 +15,6 @@ export type Question = {
   answer: string | null;
   grade: number | null;
   rest: number | null;
-  loading?: boolean;
 };
 
 const initialState: Question = {
@@ -25,24 +23,18 @@ const initialState: Question = {
   answer: "",
   grade: null,
   rest: null,
-  loading: true,
 };
 
 const subjectsReducer = (state = initialState, action: Action) => {
   switch (action.type) {
     case actionTypes.SET_QUESTION:
       return {
+        ...state,
         id: action.id,
         question: action.question,
         answer: action.answer,
         grade: action.grade,
         rest: action.rest,
-        loading: false,
-      };
-    case actionTypes.SET_QUESTION_LOADING:
-      return {
-        ...state,
-        loading: action.loading,
       };
   }
   return state;
