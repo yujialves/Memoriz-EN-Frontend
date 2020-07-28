@@ -11,6 +11,7 @@ type Props = {
   subject: string;
   grade: number;
   rest: number;
+  disablePlay: boolean;
   onSpeech: () => void;
 };
 
@@ -34,7 +35,7 @@ const HeaderController: React.FC<Props> = (props) => {
   return (
     <View style={styles.headerContainer}>
       <View style={styles.header}>
-        <View style={styles.subjectContainer}>
+        <View>
           <Text style={styles.subject} data-test="subject">
             {props.subject}: G{props.grade}
           </Text>
@@ -56,7 +57,7 @@ const HeaderController: React.FC<Props> = (props) => {
           <TouchableOpacity
             style={styles.playButton}
             activeOpacity={0.7}
-            disabled={!("speechSynthesis" in window)}
+            disabled={!("speechSynthesis" in window) || props.disablePlay}
             onPress={props.onSpeech}
             data-test="play-button"
           >
@@ -73,6 +74,16 @@ const HeaderController: React.FC<Props> = (props) => {
   );
 };
 
+const buttonStyles = {
+  width: 100,
+  height: 32,
+  borderRadius: 16,
+  borderWidth: 2,
+  shadowColor: "black",
+  shadowRadius: 8,
+  shadowOpacity: 0.1,
+};
+
 const styles = StyleSheet.create({
   headerContainer: {
     paddingHorizontal: 20,
@@ -82,17 +93,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  subjectContainer: {},
   subject: {
     color: Colors.boldText,
     fontWeight: "bold",
     fontSize: 16,
   },
   endButton: {
-    width: 100,
-    height: 32,
-    borderRadius: 16,
-    borderWidth: 2,
+    ...buttonStyles,
     borderColor: Colors.primary,
     justifyContent: "center",
     alignItems: "center",
@@ -102,13 +109,10 @@ const styles = StyleSheet.create({
     color: Colors.boldText,
   },
   playButton: {
+    ...buttonStyles,
     alignSelf: "flex-end",
-    width: 100,
-    height: 32,
     marginTop: 8,
     borderColor: "orange",
-    borderWidth: 2,
-    borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
   },

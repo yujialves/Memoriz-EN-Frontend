@@ -38,6 +38,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
+    shadowColor: 'black',
+    shadowRadius: 8,
+    shadowOpacity: 0.1
   },
   text: {
     fontWeight: "bold",

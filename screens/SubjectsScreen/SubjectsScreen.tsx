@@ -91,23 +91,24 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: "white",
-    borderColor: Colors.border,
-    borderWidth: 2,
     borderRadius: 20,
     height: 72,
     width: Dimensions.get("screen").width * 0.8,
     marginVertical: 12,
     flexDirection: "row",
+    shadowColor: "black",
+    shadowOpacity: 0.1,
+    shadowRadius: 8
   },
   titleContaier: {
     flex: 5,
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     color: Colors.boldText,
     fontWeight: "bold",
     paddingLeft: 12,
-    paddingVertical: 20,
+    paddingVertical: 24,
   },
   gradesContainer: {
     flex: 2,

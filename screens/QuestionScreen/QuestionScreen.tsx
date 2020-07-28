@@ -52,6 +52,12 @@ const QuestionScreen: React.FC = () => {
     return <Spinner width={40} height={40} />;
   }
 
+  console.log(
+    /[ぁ-んァ-ン一-龥]/.test(
+      showAnswer ? (question.answer as string) : (question.question as string)
+    )
+  );
+
   return (
     <SafeAreaView style={styles.screen}>
       <HeaderController
@@ -59,6 +65,11 @@ const QuestionScreen: React.FC = () => {
         grade={question.grade as number}
         rest={question.rest as number}
         onSpeech={onSpeech}
+        disablePlay={/[ぁ-んァ-ン一-龥]/.test(
+          showAnswer
+            ? (question.answer as string)
+            : (question.question as string)
+        )}
       />
       <View style={styles.questionContainer}>
         <Text style={styles.question}>
