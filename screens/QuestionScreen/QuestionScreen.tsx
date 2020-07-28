@@ -10,12 +10,6 @@ import Colors from "../../constants/Colors";
 import BottomController from "../../components/BottomController/BottomController";
 import * as questionActions from "../../store/actions/question";
 
-const speak = (text: string) => {
-  const uttr = new SpeechSynthesisUtterance(text);
-  uttr.lang = "en-US";
-  speechSynthesis.speak(uttr);
-};
-
 const QuestionScreen: React.FC = () => {
   const dispatch = useDispatch();
   const subjectId = useSelector(
@@ -37,24 +31,11 @@ const QuestionScreen: React.FC = () => {
   }, [dispatch]);
 
   const onSpeech = () => {
-    const content = showAnswer
-      ? (question.answer as string)
-      : (question.question as string);
-    if (content.includes("\n")) {
-      const contents = content.split("\n");
-      speak(contents[0]);
-      contents.shift();
-      const timerID = setInterval(() => {
-        speak(contents[0]);
-        if (contents.length !== 1) {
-          contents.shift();
-        } else {
-          clearInterval(timerID);
-        }
-      }, 1000);
-    } else {
-      speak(content);
-    }
+    const uttr = new SpeechSynthesisUtterance(
+      showAnswer ? (question.answer as string) : (question.question as string)
+    );
+    uttr.lang = "en-US";
+    speechSynthesis.speak(uttr);
   };
 
   const onCorrect = () => {
@@ -70,6 +51,12 @@ const QuestionScreen: React.FC = () => {
   if (question.loading) {
     return <Spinner width={40} height={40} />;
   }
+
+  console.log(
+    /[ぁ-んァ-ン一-龥]/.test(
+      showAnswer ? (question.answer as string) : (question.question as string)
+    )
+  );
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -90,7 +77,7 @@ const QuestionScreen: React.FC = () => {
             ? showAnswer
               ? question.answer
               : question.question
-            : ""}
+            : "終了"}
         </Text>
       </View>
       {question.rest !== 0 && (
