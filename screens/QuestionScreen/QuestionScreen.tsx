@@ -81,7 +81,7 @@ const QuestionScreen: React.FC = () => {
         </Text>
       </View>
       {question.rest !== 0 && (
-        <View style={styles.bottomContainer}>
+        <View>
           <BottomController
             showAnswer={showAnswer}
             onShow={() => setShowAnswer((state) => !state)}
@@ -97,11 +97,11 @@ const QuestionScreen: React.FC = () => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+    justifyContent: "space-between",
   },
   questionContainer: {
     justifyContent: "center",
     alignItems: "center",
-    flex: 17,
     paddingHorizontal: 4,
   },
   question: {
@@ -109,9 +109,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: Colors.boldText,
     textAlign: "center",
-  },
-  bottomContainer: {
-    flex: 1,
+    width: "90%",
   },
 });
 

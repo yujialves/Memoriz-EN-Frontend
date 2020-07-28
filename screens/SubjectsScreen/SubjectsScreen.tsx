@@ -56,6 +56,7 @@ const SubjectsScreen: React.FC<Props> = (props) => {
           onPress={() => {
             props.navigation!.navigate("Detail", {
               subjectId: subject.subjectId,
+              subjectName: subject.name,
             });
           }}
         >
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     shadowColor: "black",
     shadowOpacity: 0.1,
-    shadowRadius: 8
+    shadowRadius: 8,
   },
   titleContaier: {
     flex: 5,
