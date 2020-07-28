@@ -5,12 +5,17 @@ import Colors from "../../constants/Colors";
 import DetailScreen from "../../screens/DetailScreen/DetailScreen";
 import { useSelector } from "react-redux";
 import QuestionScreen from "../../screens/QuestionScreen/QuestionScreen";
+import { RouteProp } from "@react-navigation/native";
 
 const StackNavigator = createStackNavigator();
 
 export type RootStackParamList = {
   Subjects: undefined;
-  Detail: { subjectId: number };
+  Detail: { subjectId: number; subjectName: string };
+};
+
+type RootContainer = {
+  route: RouteProp<Record<string, any | undefined>, "Detail">;
 };
 
 const HomeNavigation: React.FC = () => {
@@ -27,10 +32,9 @@ const HomeNavigation: React.FC = () => {
       screenOptions={{
         headerStyle: {
           backgroundColor: Colors.primary,
-          height: 88
+          height: 88,
         },
         headerTintColor: Colors.tintColor,
-        
       }}
     >
       <StackNavigator.Screen
@@ -44,7 +48,9 @@ const HomeNavigation: React.FC = () => {
       <StackNavigator.Screen
         name="Detail"
         component={DetailScreen}
-        options={{ title: "詳細" }}
+        options={({ route }: RootContainer) => {
+          return { title: route.params!.subjectName };
+        }}
         data-test="screen"
       />
     </StackNavigator.Navigator>
