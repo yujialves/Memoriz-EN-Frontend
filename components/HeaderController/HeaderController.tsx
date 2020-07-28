@@ -22,11 +22,11 @@ const HeaderController: React.FC<Props> = (props) => {
     dispatch(subjectsActions.getSubjects());
     dispatch(
       questionActions.setQuestion({
-        id: null,
+        id: 0,
         question: "",
         answer: "",
-        grade: null,
-        rest: null,
+        grade: 0,
+        rest: 0,
       })
     );
     dispatch(startActions.setStarted(false, 0));

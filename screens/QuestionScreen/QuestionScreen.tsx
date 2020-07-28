@@ -36,19 +36,19 @@ const QuestionScreen: React.FC = () => {
 
   const onSpeech = () => {
     const uttr = new SpeechSynthesisUtterance(
-      showAnswer ? (question.answer as string) : (question.question as string)
+      showAnswer ? question.answer : question.question
     );
     uttr.lang = "en-US";
     speechSynthesis.speak(uttr);
   };
 
   const onCorrect = () => {
-    dispatch(questionActions.correctAnwer(question.id as number, subjectId));
+    dispatch(questionActions.correctAnwer(question.id, subjectId));
     setShowAnswer(false);
   };
 
   const onInCorrect = () => {
-    dispatch(questionActions.inCorrectAnwer(question.id as number, subjectId));
+    dispatch(questionActions.inCorrectAnwer(question.id, subjectId));
     setShowAnswer(false);
   };
 
@@ -56,13 +56,11 @@ const QuestionScreen: React.FC = () => {
     <SafeAreaView style={styles.screen}>
       <HeaderController
         subject={subject.name}
-        grade={question.grade as number}
-        rest={question.rest as number}
+        grade={question.grade}
+        rest={question.rest}
         onSpeech={onSpeech}
         disablePlay={/[ぁ-んァ-ン一-龥]/.test(
-          showAnswer
-            ? (question.answer as string)
-            : (question.question as string)
+          showAnswer ? question.answer : question.question
         )}
       />
       <View style={styles.questionContainer}>
