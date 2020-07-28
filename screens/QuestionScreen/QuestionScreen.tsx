@@ -23,6 +23,10 @@ const QuestionScreen: React.FC = () => {
   const question = useSelector(
     (state: { question: Question }) => state.question
   );
+  const isLoadingQuestion = useSelector(
+    (state: { loadings: { isLoadingQuestion: boolean } }) =>
+      state.loadings.isLoadingQuestion
+  );
 
   const [showAnswer, setShowAnswer] = useState(false);
 
@@ -48,16 +52,6 @@ const QuestionScreen: React.FC = () => {
     setShowAnswer(false);
   };
 
-  if (question.loading) {
-    return <Spinner width={40} height={40} />;
-  }
-
-  console.log(
-    /[ぁ-んァ-ン一-龥]/.test(
-      showAnswer ? (question.answer as string) : (question.question as string)
-    )
-  );
-
   return (
     <SafeAreaView style={styles.screen}>
       <HeaderController
@@ -72,24 +66,26 @@ const QuestionScreen: React.FC = () => {
         )}
       />
       <View style={styles.questionContainer}>
-        <Text style={styles.question}>
-          {question.rest !== 0
-            ? showAnswer
-              ? question.answer
-              : question.question
-            : "終了"}
-        </Text>
+        {isLoadingQuestion ? (
+          <Spinner width={40} height={40} />
+        ) : (
+          <Text style={styles.question}>
+            {question.rest !== 0
+              ? showAnswer
+                ? question.answer
+                : question.question
+              : "終了"}
+          </Text>
+        )}
       </View>
-      {question.rest !== 0 && (
-        <View>
-          <BottomController
-            showAnswer={showAnswer}
-            onShow={() => setShowAnswer((state) => !state)}
-            onCorrect={onCorrect}
-            onInCorrect={onInCorrect}
-          />
-        </View>
-      )}
+      <BottomController
+        showAnswer={showAnswer}
+        onShow={() => setShowAnswer((state) => !state)}
+        onCorrect={onCorrect}
+        onInCorrect={onInCorrect}
+        display={question.rest !== 0}
+        disabled={isLoadingQuestion}
+      />
     </SafeAreaView>
   );
 };
