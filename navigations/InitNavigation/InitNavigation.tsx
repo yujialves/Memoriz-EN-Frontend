@@ -1,8 +1,19 @@
 import React from "react";
 import { View } from "react-native";
+import { useSelector } from "react-redux";
+import HomeNavigation from "../HomeNavigation/HomeNavigation";
+import LoginScreen from "../../screens/LoginScreen/LoginScreen";
 
 const InitNavigation: React.FC = () => {
-  return <View></View>;
+  const token = useSelector(
+    (state: { auth: { token: string } }) => state.auth.token
+  );
+
+  if (token === "") {
+    return <LoginScreen />;
+  }
+
+  return <HomeNavigation />;
 };
 
 export default InitNavigation;

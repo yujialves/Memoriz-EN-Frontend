@@ -8,14 +8,14 @@ import subjectsReducer from "./store/reducers/subjectsReducer";
 import startReducer from "./store/reducers/startReducer";
 import questionReducer from "./store/reducers/questionReducer";
 import loadingsReducer from "./store/reducers/loadingsReducer";
-import userReducer from "./store/reducers/userReducer";
+import authReducer from "./store/reducers/authReducer";
 
 const rootReducer = combineReducers({
   subjects: subjectsReducer,
   start: startReducer,
   question: questionReducer,
   loadings: loadingsReducer,
-  user: userReducer,
+  auth: authReducer,
 });
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 
