@@ -5,15 +5,19 @@ type Action = {
   user: string;
   password: string;
   token: string;
+  expireDate: number;
+  refreshToken: string;
 };
 
 const initialState = {
   user: "",
   password: "",
   token: "",
+  expireDate: null,
+  refreshToken: "",
 };
 
-const userReducer = (state = initialState, action: Action) => {
+const authReducer = (state = initialState, action: Action) => {
   switch (action.type) {
     case actionTypes.SET_USER:
       return {
@@ -25,9 +29,15 @@ const userReducer = (state = initialState, action: Action) => {
       return {
         ...state,
         token: action.token,
+        expireDate: action.expireDate,
+      };
+    case actionTypes.SET_REFRESH_TOKEN:
+      return {
+        ...state,
+        refreshToken: action.refreshToken,
       };
   }
   return state;
 };
 
-export default userReducer;
+export default authReducer;
