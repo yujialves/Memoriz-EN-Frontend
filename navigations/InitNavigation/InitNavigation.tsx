@@ -1,5 +1,4 @@
 import React from "react";
-import { View } from "react-native";
 import { useSelector } from "react-redux";
 import HomeNavigation from "../HomeNavigation/HomeNavigation";
 import LoginScreen from "../../screens/LoginScreen/LoginScreen";

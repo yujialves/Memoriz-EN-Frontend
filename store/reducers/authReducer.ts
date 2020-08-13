@@ -7,6 +7,7 @@ type Action = {
   token: string;
   expireDate: number;
   refreshToken: string;
+  loginErrorText: string;
 };
 
 const initialState = {
@@ -15,6 +16,7 @@ const initialState = {
   token: "",
   expireDate: null,
   refreshToken: "",
+  loginErrorText: "",
 };
 
 const authReducer = (state = initialState, action: Action) => {
@@ -35,6 +37,11 @@ const authReducer = (state = initialState, action: Action) => {
       return {
         ...state,
         refreshToken: action.refreshToken,
+      };
+    case actionTypes.SET_LOGIN_ERROR:
+      return {
+        ...state,
+        loginErrorText: action.loginErrorText,
       };
   }
   return state;

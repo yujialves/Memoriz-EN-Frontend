@@ -5,3 +5,5 @@ export const SET_LOADING_QUESTION = "SET_LOADING_QUESTION";
 export const SET_USER = "SET_USER";
 export const SET_TOKEN = "SET_TOKEN";
 export const SET_REFRESH_TOKEN = "SET_REFRESH_TOKEN";
+export const SET_LOGIN_ERROR = "SET_LOGIN_ERROR";
+export const SET_IS_LOGING = "SET_IS_LOGING";
