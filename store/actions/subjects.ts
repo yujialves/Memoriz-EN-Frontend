@@ -9,9 +9,13 @@ type Response = {
   data: { subjects: Subjects };
 };
 
-export const getSubjects = () => {
+export const getSubjects = (token: string) => {
   return async (dispatch: Dispatch) => {
-    const response: Response = await axios.get(baseURL + "subjects");
+    const response: Response = await axios.get(baseURL + "subjects", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
     return dispatch(setSubjects(response.data.subjects));
   };
 };

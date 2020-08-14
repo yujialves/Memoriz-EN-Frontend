@@ -27,11 +27,14 @@ const QuestionScreen: React.FC = () => {
     (state: { loadings: { isLoadingQuestion: boolean } }) =>
       state.loadings.isLoadingQuestion
   );
+  const token = useSelector(
+    (state: { auth: { token: string } }) => state.auth.token
+  );
 
   const [showAnswer, setShowAnswer] = useState(false);
 
   useEffect(() => {
-    dispatch(getQuestion(subjectId));
+    dispatch(getQuestion(subjectId, token));
   }, [dispatch]);
 
   const onSpeech = () => {
@@ -43,12 +46,12 @@ const QuestionScreen: React.FC = () => {
   };
 
   const onCorrect = () => {
-    dispatch(questionActions.correctAnwer(question.id, subjectId));
+    dispatch(questionActions.correctAnwer(question.id, subjectId, token));
     setShowAnswer(false);
   };
 
   const onInCorrect = () => {
-    dispatch(questionActions.inCorrectAnwer(question.id, subjectId));
+    dispatch(questionActions.inCorrectAnwer(question.id, subjectId, token));
     setShowAnswer(false);
   };
 

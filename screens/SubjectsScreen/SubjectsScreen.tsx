@@ -34,9 +34,12 @@ const SubjectsScreen: React.FC<Props> = (props) => {
   const subjects = useSelector(
     (state: { subjects: { subjects: Subjects } }) => state.subjects.subjects
   );
+  const token = useSelector(
+    (state: { auth: { token: string } }) => state.auth.token
+  );
 
   useEffect(() => {
-    dispatch(subjectsActions.getSubjects());
+    dispatch(subjectsActions.getSubjects(token));
   }, [dispatch]);
 
   if (subjects.length === 0) {
