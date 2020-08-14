@@ -42,6 +42,7 @@ export const login = (user: string, password: string) => {
 };
 
 const setUser = (user: string, password: string) => {
+  localStorage.setItem("user", user);
   return {
     type: actionTypes.SET_USER,
     user,
@@ -50,6 +51,9 @@ const setUser = (user: string, password: string) => {
 };
 
 const setToken = (token: string, refreshToken: string, expireDate: number) => {
+  localStorage.setItem("token", token);
+  localStorage.setItem("refreshToken", refreshToken);
+  localStorage.setItem("expireDate", expireDate.toString());
   return {
     type: actionTypes.SET_TOKEN,
     token,
