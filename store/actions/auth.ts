@@ -43,7 +43,7 @@ export const login = (user: string, password: string) => {
 
 export const refreshToken = (refreshToken: string) => {
   return async (dispatch: Dispatch) => {
-    const response = await axios.post(baseURL + "auth/refresh", {
+    const response = await axios.get(baseURL + "auth/refresh", {
       headers: {
         Authorization: "Bearer " + refreshToken,
       },
