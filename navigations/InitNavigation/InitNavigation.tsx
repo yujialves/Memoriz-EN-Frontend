@@ -14,6 +14,7 @@ const InitNavigation: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    console.log('USE EFFECT!!!')
     setIsLoading(true);
 
     const token = localStorage.getItem("token");
