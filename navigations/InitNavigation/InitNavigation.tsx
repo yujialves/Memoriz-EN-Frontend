@@ -11,12 +11,9 @@ const InitNavigation: React.FC = () => {
   const token = useSelector(
     (state: { auth: { token: string } }) => state.auth.token
   );
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log('USE EFFECT!!!')
-    setIsLoading(true);
-
     const token = localStorage.getItem("token");
     const refreshToken = localStorage.getItem("refreshToken");
     const expireDate = (localStorage.getItem(
@@ -29,9 +26,10 @@ const InitNavigation: React.FC = () => {
     }
 
     // トークンが切れていればトークンの更新
-    console.log(expireDate - new Date().getTime());
-    if (expireDate - new Date().getTime() > 0) {
+    if (expireDate - new Date().getTime() < 0) {
       dispatch(authAction.refreshToken(refreshToken));
+    } else {
+      dispatch(authAction.setToken(token, refreshToken, expireDate));
     }
 
     setIsLoading(false);
