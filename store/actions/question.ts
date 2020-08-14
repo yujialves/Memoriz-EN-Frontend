@@ -10,13 +10,22 @@ type Response = {
   data: { question: Question; rest: number };
 };
 
-export const inCorrectAnwer = (questionId: number, subjectId: number) => {
+export const inCorrectAnwer = (
+  questionId: number,
+  subjectId: number,
+  token: string
+) => {
   return async (dispatch: Dispatch) => {
     dispatch(loadingsActions.setLoadingQuestion(true));
     // レスポンスとして新しい問題を得る
     const response: Response = await axios.post(
       baseURL + "question/incorrect",
-      JSON.stringify({ questionId, subjectId })
+      JSON.stringify({ questionId, subjectId }),
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
     );
     dispatch(loadingsActions.setLoadingQuestion(false));
     return dispatch(
@@ -31,13 +40,22 @@ export const inCorrectAnwer = (questionId: number, subjectId: number) => {
   };
 };
 
-export const correctAnwer = (questionId: number, subjectId: number) => {
+export const correctAnwer = (
+  questionId: number,
+  subjectId: number,
+  token: string
+) => {
   return async (dispatch: Dispatch) => {
     dispatch(loadingsActions.setLoadingQuestion(true));
     // レスポンスとして新しい問題を得る
     const response: Response = await axios.post(
       baseURL + "question/correct",
-      JSON.stringify({ questionId, subjectId })
+      JSON.stringify({ questionId, subjectId }),
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
     );
     dispatch(loadingsActions.setLoadingQuestion(false));
     return dispatch(
@@ -52,12 +70,17 @@ export const correctAnwer = (questionId: number, subjectId: number) => {
   };
 };
 
-export const getQuestion = (subjectId: number) => {
+export const getQuestion = (subjectId: number, token: string) => {
   return async (dispatch: Dispatch) => {
     dispatch(loadingsActions.setLoadingQuestion(true));
     const response: Response = await axios.post(
       baseURL + "question",
-      JSON.stringify({ subjectId })
+      JSON.stringify({ subjectId }),
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
     );
     dispatch(loadingsActions.setLoadingQuestion(false));
     return dispatch(

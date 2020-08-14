@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../constants/Colors";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as subjectsActions from "../../store/actions/subjects";
 import * as startActions from "../../store/actions/start";
 import * as questionActions from "../../store/actions/question";
@@ -17,9 +17,12 @@ type Props = {
 
 const HeaderController: React.FC<Props> = (props) => {
   const dispatch = useDispatch();
+  const token = useSelector(
+    (state: { auth: { token: string } }) => state.auth.token
+  );
 
   const endButtonHandler = () => {
-    dispatch(subjectsActions.getSubjects());
+    dispatch(subjectsActions.getSubjects(token));
     dispatch(
       questionActions.setQuestion({
         id: 0,

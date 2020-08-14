@@ -22,6 +22,7 @@ const InitNavigation: React.FC = () => {
 
     // トークンがセットされていなければログイン画面へ
     if (!token || !refreshToken || !expireDate) {
+      setIsLoading(false);
       return;
     }
 
