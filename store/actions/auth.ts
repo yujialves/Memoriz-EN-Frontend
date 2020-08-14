@@ -41,8 +41,34 @@ export const login = (user: string, password: string) => {
   };
 };
 
-const setUser = (user: string, password: string) => {
+export const refreshToken = (refreshToken: string) => {
+  return async (dispatch: Dispatch) => {
+    const response = await axios.post(baseURL + "auth/refresh", {
+      headers: {
+        Authorization: "Bearer " + refreshToken,
+      },
+    });
+
+    console.log(response);
+  };
+};
+
+const storeUser = (user: string, password: string) => {
   localStorage.setItem("user", user);
+};
+
+const storeToken = (
+  token: string,
+  refreshToken: string,
+  expireDate: number
+) => {
+  localStorage.setItem("token", token);
+  localStorage.setItem("refreshToken", refreshToken);
+  localStorage.setItem("expireDate", expireDate.toString());
+};
+
+export const setUser = (user: string, password: string) => {
+  storeUser(user, password);
   return {
     type: actionTypes.SET_USER,
     user,
@@ -50,10 +76,12 @@ const setUser = (user: string, password: string) => {
   };
 };
 
-const setToken = (token: string, refreshToken: string, expireDate: number) => {
-  localStorage.setItem("token", token);
-  localStorage.setItem("refreshToken", refreshToken);
-  localStorage.setItem("expireDate", expireDate.toString());
+export const setToken = (
+  token: string,
+  refreshToken: string,
+  expireDate: number
+) => {
+  storeToken(token, refreshToken, expireDate);
   return {
     type: actionTypes.SET_TOKEN,
     token,
