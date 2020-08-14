@@ -5,6 +5,7 @@ type Props = {
   placeholder: string;
   value: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
+  hidden?: boolean;
 };
 
 const FormInput: React.FC<Props> = (props) => {
@@ -14,6 +15,7 @@ const FormInput: React.FC<Props> = (props) => {
       placeholder={props.placeholder}
       value={props.value}
       onChangeText={(text: string) => props.setValue(text)}
+      secureTextEntry={props.hidden}
     />
   );
 };

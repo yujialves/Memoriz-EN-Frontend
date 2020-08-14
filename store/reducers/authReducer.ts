@@ -31,6 +31,7 @@ const authReducer = (state = initialState, action: Action) => {
       return {
         ...state,
         token: action.token,
+        refreshToken: action.refreshToken,
         expireDate: action.expireDate,
       };
     case actionTypes.SET_REFRESH_TOKEN:

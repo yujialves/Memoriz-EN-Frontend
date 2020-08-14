@@ -25,6 +25,7 @@ const LoginForm: React.FC = () => {
         placeholder="パスワード"
         value={password}
         setValue={setPassword}
+        hidden
       />
       {loginErrorText !== "" && (
         <View>

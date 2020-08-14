@@ -4,17 +4,36 @@ import * as loadingsAction from "./loadings";
 import axios from "axios";
 import { baseURL } from "../../secrets/constants";
 
-type Response = {};
+type ResponseData = {
+  user: string;
+  password: string;
+  token: string;
+  refreshToken: string;
+  expireDate: number;
+};
 
 export const login = (user: string, password: string) => {
   return async (dispatch: Dispatch) => {
     if (validateUser(user) && validatePassword(password)) {
       dispatch(loadingsAction.setIsLoging(true));
       // レスポンスとして新しい問題を得る
-      const response: Response = await axios.post(
-        baseURL + "auth/login",
-        JSON.stringify({ user, password })
-      );
+      const response = await axios
+        .post(baseURL + "auth/login", JSON.stringify({ user, password }))
+        .catch((err) => {
+          dispatch(setLoginError("ログインに失敗しました。"));
+        });
+      if (response) {
+        dispatch(setLoginError(""));
+        const responseData: ResponseData = response.data;
+        dispatch(setUser(responseData.user, responseData.password));
+        dispatch(
+          setToken(
+            responseData.token,
+            responseData.refreshToken,
+            responseData.expireDate
+          )
+        );
+      }
       dispatch(loadingsAction.setIsLoging(false));
     } else {
       dispatch(setLoginError("ログインに失敗しました。"));
@@ -30,10 +49,12 @@ const setUser = (user: string, password: string) => {
   };
 };
 
-const setToken = (token: string) => {
+const setToken = (token: string, refreshToken: string, expireDate: number) => {
   return {
     type: actionTypes.SET_TOKEN,
     token,
+    refreshToken,
+    expireDate,
   };
 };
 
