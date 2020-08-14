@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import HomeNavigation from "../HomeNavigation/HomeNavigation";
 import LoginScreen from "../../screens/LoginScreen/LoginScreen";
-import * as loadingsAction from "../../store/actions/loadings";
 import * as authAction from "../../store/actions/auth";
+import Spinner from "../../components/Spinner/Spinner";
 
 const InitNavigation: React.FC = () => {
   const dispatch = useDispatch();
@@ -11,9 +11,10 @@ const InitNavigation: React.FC = () => {
   const token = useSelector(
     (state: { auth: { token: string } }) => state.auth.token
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    dispatch(loadingsAction.setIsLoging(true));
+    setIsLoading(true);
 
     const token = localStorage.getItem("token");
     const refreshToken = localStorage.getItem("refreshToken");
@@ -32,8 +33,12 @@ const InitNavigation: React.FC = () => {
       dispatch(authAction.refreshToken(refreshToken));
     }
 
-    // console.log(expireDate - new Date().getTime());
+    setIsLoading(false);
   }, [dispatch]);
+
+  if (isLoading) {
+    return <Spinner width={40} height={40} />;
+  }
 
   if (token === "") {
     return <LoginScreen />;
