@@ -43,28 +43,28 @@ export const login = (user: string, password: string) => {
 
 export const refreshToken = (refreshToken: string) => {
   return async (dispatch: Dispatch) => {
-    const response = await axios.get(baseURL + "auth/refresh", {
-      headers: {
-        Authorization: "Bearer " + refreshToken,
-      },
-    });
+    const response = await axios
+      .get(baseURL + "auth/refresh", {
+        headers: {
+          Authorization: "Bearer " + refreshToken,
+        },
+      })
+      .catch((err) => {
+        dispatch(setToken("", "", null));
+      });
+    if (response) {
+      const responseData: ResponseData = response.data;
+      dispatch(
+        setToken(
+          responseData.token,
+          responseData.refreshToken,
+          responseData.expireDate
+        )
+      );
+    }
 
     console.log(response);
   };
-};
-
-const storeUser = (user: string, password: string) => {
-  localStorage.setItem("user", user);
-};
-
-const storeToken = (
-  token: string,
-  refreshToken: string,
-  expireDate: number
-) => {
-  localStorage.setItem("token", token);
-  localStorage.setItem("refreshToken", refreshToken);
-  localStorage.setItem("expireDate", expireDate.toString());
 };
 
 export const setUser = (user: string, password: string) => {
@@ -79,7 +79,7 @@ export const setUser = (user: string, password: string) => {
 export const setToken = (
   token: string,
   refreshToken: string,
-  expireDate: number
+  expireDate: number | null
 ) => {
   storeToken(token, refreshToken, expireDate);
   return {
@@ -88,6 +88,23 @@ export const setToken = (
     refreshToken,
     expireDate,
   };
+};
+
+const storeUser = (user: string, password: string) => {
+  localStorage.setItem("user", user);
+};
+
+const storeToken = (
+  token: string,
+  refreshToken: string,
+  expireDate: number | null
+) => {
+  localStorage.setItem("token", token);
+  localStorage.setItem("refreshToken", refreshToken);
+  localStorage.setItem(
+    "expireDate",
+    expireDate === null ? "" : expireDate.toString()
+  );
 };
 
 const setLoginError = (loginErrorText: string) => {
