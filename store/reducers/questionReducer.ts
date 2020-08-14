@@ -10,19 +10,19 @@ type Action = {
 };
 
 export type Question = {
-  id: number | null;
-  question: string | null;
-  answer: string | null;
-  grade: number | null;
-  rest: number | null;
+  id: number;
+  question: string;
+  answer: string;
+  grade: number;
+  rest: number;
 };
 
 const initialState: Question = {
-  id: null,
+  id: 0,
   question: "",
   answer: "",
-  grade: null,
-  rest: null,
+  grade: 0,
+  rest: 0,
 };
 
 const subjectsReducer = (state = initialState, action: Action) => {

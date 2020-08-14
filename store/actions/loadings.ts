@@ -6,3 +6,10 @@ export const setLoadingQuestion = (isLoadingQuestion: boolean) => {
     isLoadingQuestion,
   };
 };
+
+export const setIsLoging = (isLoging: boolean) => {
+  return {
+    type: actionTypes.SET_IS_LOGING,
+    isLoging,
+  };
+};
