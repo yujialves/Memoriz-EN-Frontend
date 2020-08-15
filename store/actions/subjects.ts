@@ -16,7 +16,6 @@ export const getSubjects = (token: string) => {
         Authorization: "Bearer " + token,
       },
     });
-    console.log(response);
     return dispatch(setSubjects(response.data.subjects, response.data.exp));
   };
 };
