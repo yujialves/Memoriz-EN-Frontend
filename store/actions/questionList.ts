@@ -23,7 +23,6 @@ export const fetchQuestionList = (subjectId: number, token: string) => {
     );
     if (response) {
       dispatch(loadingsActions.setFetchingQuestionList(false));
-      console.log(response);
       dispatch(setQuestionList(response.data.questionList));
     }
   };
