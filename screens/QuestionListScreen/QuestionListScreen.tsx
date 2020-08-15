@@ -52,7 +52,7 @@ const QuestionListScreen: React.FC<Props> = (props) => {
   return (
     <View style={styles.screen}>
       <ScrollView>
-        <OrderController questionList={questionList} />
+        <OrderController />
         <Divider />
         {questionList.map((question) => (
           <View key={question.id}>

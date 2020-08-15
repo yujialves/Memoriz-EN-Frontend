@@ -2,15 +2,16 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Colors from "../../constants/Colors";
 import { Question } from "../../store/reducers/questionListReducer";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as questionListAction from "../../store/actions/questionList";
 
-type Props = {
-  questionList: Question[];
-};
-
-const OrderController: React.FC<Props> = (props) => {
+const OrderController: React.FC = () => {
   const dispatch = useDispatch();
+  const questionList = useSelector(
+    (state: { questionList: { questionList: Question[] } }) =>
+      state.questionList.questionList
+  );
+
   const [currentOrder, setCurrentOrder] = useState(
     "id" as "id" | "alphabet" | "grade"
   );
@@ -18,25 +19,25 @@ const OrderController: React.FC<Props> = (props) => {
 
   const onPressReverseHandler = () => {
     dispatch(
-      questionListAction.reorder(props.questionList, currentOrder, !reversed)
+      questionListAction.reorder(questionList, currentOrder, !reversed)
     );
     setReversed(!reversed);
   };
 
   const onPressIdHandler = () => {
-    dispatch(questionListAction.reorder(props.questionList, "id", reversed));
+    dispatch(questionListAction.reorder(questionList, "id", reversed));
     setCurrentOrder("id");
   };
 
   const onPressAlphaHandler = () => {
     dispatch(
-      questionListAction.reorder(props.questionList, "alphabet", reversed)
+      questionListAction.reorder(questionList, "alphabet", reversed)
     );
     setCurrentOrder("alphabet");
   };
 
   const onPressGradeHandler = () => {
-    dispatch(questionListAction.reorder(props.questionList, "grade", reversed));
+    dispatch(questionListAction.reorder(questionList, "grade", reversed));
     setCurrentOrder("grade");
   };
 

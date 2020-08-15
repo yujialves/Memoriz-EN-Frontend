@@ -62,6 +62,7 @@ export const reorder = (
         }
         break;
     }
+    console.log(newQuestionList);
     dispatch(setQuestionList(newQuestionList));
   };
 };
