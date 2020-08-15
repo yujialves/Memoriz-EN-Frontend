@@ -2,7 +2,7 @@ import * as actionTypes from "../actions/actionTypes";
 
 type Action = {
   type: string;
-  questions: Array<Question>;
+  questionList: Array<Question>;
 };
 
 export type Question = {
@@ -22,7 +22,7 @@ const questionListReducer = (state = initialState, action: Action) => {
   switch (action.type) {
     case actionTypes.SET_QUESTION_LIST:
       return {
-        questions: action.questions,
+        questionList: action.questionList,
       };
   }
   return state;
