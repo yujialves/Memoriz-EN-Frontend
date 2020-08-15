@@ -10,8 +10,8 @@ export type Question = {
   question: string;
   answer: string;
   grade: number;
-  CorrectCountSum: number;
-  InCorrectCountSum: number;
+  correctCountSum: number;
+  inCorrectCountSum: number;
 };
 
 const initialState: { questions: Array<Question> } = {
