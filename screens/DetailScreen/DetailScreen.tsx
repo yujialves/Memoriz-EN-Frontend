@@ -52,9 +52,6 @@ const DetailScreen: React.FC<Props> = (props) => {
         gradeDown={subject.inCorrectCount}
         gradeUp={subject.correctCount}
       />
-      <View style={styles.buttonContainer}>
-        <StartButton subjectId={props.route!.params.subjectId} />
-      </View>
       <View style={styles.questionButtonContainer}>
         <TouchableOpacity
           style={styles.questionsBtn}
@@ -67,6 +64,9 @@ const DetailScreen: React.FC<Props> = (props) => {
         >
           <Text style={styles.questionButtonText}>問題一覧</Text>
         </TouchableOpacity>
+      </View>
+      <View style={styles.buttonContainer}>
+        <StartButton subjectId={props.route!.params.subjectId} />
       </View>
     </View>
   );
@@ -81,12 +81,12 @@ const styles = StyleSheet.create({
     paddingRight: 20,
   },
   buttonContainer: {
-    paddingTop: 40,
+    paddingTop: 28,
     alignItems: "center",
   },
   questionButtonContainer: {
     alignItems: "center",
-    paddingTop: 28,
+    paddingTop: 40,
   },
   questionsBtn: {
     width: 200,
