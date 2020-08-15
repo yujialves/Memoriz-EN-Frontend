@@ -14,6 +14,7 @@ import Colors from "../../constants/Colors";
 import Spinner from "../../components/Spinner/Spinner";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigations/HomeNavigation/HomeNavigation";
+import ExpView from "../../components/ExpView/ExpView";
 
 const getTotalGrades = (grades: Grades) => {
   const totalGrade = grades.reduce((total, grade) => {
@@ -37,6 +38,9 @@ const SubjectsScreen: React.FC<Props> = (props) => {
   const token = useSelector(
     (state: { auth: { token: string } }) => state.auth.token
   );
+  const exp = useSelector(
+    (state: { subjects: { exp: number } }) => state.subjects.exp
+  );
 
   useEffect(() => {
     dispatch(subjectsActions.getSubjects(token));
@@ -51,6 +55,7 @@ const SubjectsScreen: React.FC<Props> = (props) => {
       style={styles.screen}
       contentContainerStyle={styles.contentContainer}
     >
+      <ExpView exp={exp} />
       {subjects.map((subject, i) => (
         <TouchableOpacity
           key={i}
