@@ -14,8 +14,8 @@ export type Question = {
   inCorrectCountSum: number;
 };
 
-const initialState: { questions: Array<Question> } = {
-  questions: [],
+const initialState: { questionList: Array<Question> } = {
+  questionList: [],
 };
 
 const questionListReducer = (state = initialState, action: Action) => {
