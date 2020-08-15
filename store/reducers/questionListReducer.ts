@@ -2,7 +2,7 @@ import * as actionTypes from "../actions/actionTypes";
 
 type Action = {
   type: string;
-  questionList: Array<Question>;
+  questionList: Question[];
 };
 
 export type Question = {
@@ -14,7 +14,7 @@ export type Question = {
   inCorrectCountSum: number;
 };
 
-const initialState: { questionList: Array<Question> } = {
+const initialState: { questionList: Question[] } = {
   questionList: [],
 };
 

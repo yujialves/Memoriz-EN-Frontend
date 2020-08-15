@@ -63,11 +63,12 @@ export const reorder = (
         break;
     }
     console.log(newQuestionList);
-    dispatch(setQuestionList(newQuestionList));
+    dispatch(setQuestionList([]));
+    // dispatch(setQuestionList(newQuestionList));
   };
 };
 
-const setQuestionList = (questionList: Array<Question>) => {
+const setQuestionList = (questionList: Question[]) => {
   return {
     type: actionTypes.SET_QUESTION_LIST,
     questionList,
