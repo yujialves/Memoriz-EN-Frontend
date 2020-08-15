@@ -6,7 +6,7 @@ import { Dispatch } from "redux";
 import * as loadingsActions from "./loadings";
 
 type ResponseData = {
-  data: { questions: Array<Question> };
+  data: { questionList: Array<Question> };
 };
 
 export const fetchQuestionList = (subjectId: number, token: string) => {
@@ -24,7 +24,7 @@ export const fetchQuestionList = (subjectId: number, token: string) => {
     if (response) {
       dispatch(loadingsActions.setFetchingQuestionList(false));
       console.log(response);
-      dispatch(setQuestionList(response.data.questions));
+      dispatch(setQuestionList(response.data.questionList));
     }
   };
 };
