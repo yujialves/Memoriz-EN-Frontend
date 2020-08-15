@@ -6,6 +6,8 @@ export type Subjects = Array<{
   grades: Grades;
   correctCount: number;
   inCorrectCount: number;
+  totalCorrectCount: number;
+  totalInCorrectCount: number;
 }>;
 
 export type Grades = Array<{
@@ -16,10 +18,12 @@ export type Grades = Array<{
 type Action = {
   type: string;
   subjects: Subjects;
+  exp: number;
 };
 
-const initialState: { subjects: Subjects } = {
+const initialState: { subjects: Subjects; exp: number } = {
   subjects: [],
+  exp: 0,
 };
 
 const subjectsReducer = (state = initialState, action: Action) => {
@@ -28,6 +32,7 @@ const subjectsReducer = (state = initialState, action: Action) => {
       return {
         ...state,
         subjects: action.subjects,
+        exp: action.exp,
       };
   }
   return state;
