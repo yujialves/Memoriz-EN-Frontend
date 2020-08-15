@@ -40,14 +40,6 @@ const HomeNavigation: React.FC = () => {
       }}
     >
       <StackNavigator.Screen
-        name="QuestionList"
-        component={QuestionListScreen}
-        options={{
-          title: "問題一覧",
-        }}
-        data-test="screen"
-      />
-      <StackNavigator.Screen
         name="Subjects"
         component={SubjectsScreen}
         options={{
@@ -60,6 +52,14 @@ const HomeNavigation: React.FC = () => {
         component={DetailScreen}
         options={({ route }: RootContainer) => {
           return { title: route.params!.subjectName };
+        }}
+        data-test="screen"
+      />
+      <StackNavigator.Screen
+        name="QuestionList"
+        component={QuestionListScreen}
+        options={{
+          title: "問題一覧",
         }}
         data-test="screen"
       />
