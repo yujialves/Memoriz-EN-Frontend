@@ -9,6 +9,7 @@ import startReducer from "./store/reducers/startReducer";
 import questionReducer from "./store/reducers/questionReducer";
 import loadingsReducer from "./store/reducers/loadingsReducer";
 import authReducer from "./store/reducers/authReducer";
+import questionListReducer from "./store/reducers/questionListReducer";
 
 const rootReducer = combineReducers({
   subjects: subjectsReducer,
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   question: questionReducer,
   loadings: loadingsReducer,
   auth: authReducer,
+  questionList: questionListReducer,
 });
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
 
