@@ -56,7 +56,15 @@ const DetailScreen: React.FC<Props> = (props) => {
         <StartButton subjectId={props.route!.params.subjectId} />
       </View>
       <View style={styles.questionButtonContainer}>
-        <TouchableOpacity style={styles.questionsBtn}>
+        <TouchableOpacity
+          style={styles.questionsBtn}
+          activeOpacity={0.7}
+          onPress={() =>
+            props.navigation!.navigate("QuestionList", {
+              subjectId: props.route!.params.subjectId,
+            })
+          }
+        >
           <Text style={styles.questionButtonText}>問題一覧</Text>
         </TouchableOpacity>
       </View>

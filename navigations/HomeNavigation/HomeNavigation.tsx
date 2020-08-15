@@ -6,12 +6,14 @@ import DetailScreen from "../../screens/DetailScreen/DetailScreen";
 import { useSelector } from "react-redux";
 import QuestionScreen from "../../screens/QuestionScreen/QuestionScreen";
 import { RouteProp } from "@react-navigation/native";
+import QuestionListScreen from "../../screens/QuestionListScreen/QuestionListScreen";
 
 const StackNavigator = createStackNavigator();
 
 export type RootStackParamList = {
   Subjects: undefined;
   Detail: { subjectId: number; subjectName: string };
+  QuestionList: { subjectId: number };
 };
 
 type RootContainer = {
@@ -50,6 +52,14 @@ const HomeNavigation: React.FC = () => {
         component={DetailScreen}
         options={({ route }: RootContainer) => {
           return { title: route.params!.subjectName };
+        }}
+        data-test="screen"
+      />
+      <StackNavigator.Screen
+        name="QuestionList"
+        component={QuestionListScreen}
+        options={{
+          title: "問題一覧",
         }}
         data-test="screen"
       />
