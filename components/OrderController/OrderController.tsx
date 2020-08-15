@@ -50,7 +50,7 @@ const OrderController: React.FC = () => {
             ...leftButton,
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: currentOrder === "id" ? Colors.accent : "white",
+            backgroundColor: currentOrder === "id" ? Colors.primary : "white",
           }}
           activeOpacity={0.7}
           onPress={onPressIdHandler}
@@ -58,7 +58,7 @@ const OrderController: React.FC = () => {
           <Text
             style={{
               ...textStyle,
-              color: currentOrder === "id" ? "white" : Colors.accent,
+              color: currentOrder === "id" ? "white" : Colors.boldText,
             }}
           >
             ID順
@@ -70,7 +70,7 @@ const OrderController: React.FC = () => {
             justifyContent: "center",
             alignItems: "center",
             backgroundColor:
-              currentOrder === "alphabet" ? Colors.accent : "white",
+              currentOrder === "alphabet" ? Colors.primary : "white",
           }}
           activeOpacity={0.7}
           onPress={onPressAlphaHandler}
@@ -78,10 +78,10 @@ const OrderController: React.FC = () => {
           <Text
             style={{
               ...textStyle,
-              color: currentOrder === "alphabet" ? "white" : Colors.accent,
+              color: currentOrder === "alphabet" ? "white" : Colors.boldText,
             }}
           >
-            アルファベット順
+            名前順
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -90,7 +90,7 @@ const OrderController: React.FC = () => {
             ...rightButton,
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: currentOrder === "grade" ? Colors.accent : "white",
+            backgroundColor: currentOrder === "grade" ? Colors.primary : "white",
           }}
           activeOpacity={0.7}
           onPress={onPressGradeHandler}
@@ -98,7 +98,7 @@ const OrderController: React.FC = () => {
           <Text
             style={{
               ...textStyle,
-              color: currentOrder === "grade" ? "white" : Colors.accent,
+              color: currentOrder === "grade" ? "white" : Colors.boldText,
             }}
           >
             グレード順
@@ -110,7 +110,7 @@ const OrderController: React.FC = () => {
           ...orderButton,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: reversed ? Colors.accent : "white",
+          backgroundColor: reversed ? Colors.primary : "white",
         }}
         activeOpacity={0.7}
         onPress={onPressReverseHandler}
@@ -118,7 +118,7 @@ const OrderController: React.FC = () => {
         <Text
           style={{
             ...textStyle,
-            color: reversed ? "white" : Colors.accent,
+            color: reversed ? "white" : Colors.boldText,
           }}
         >
           {reversed ? "降順" : "昇順"}
@@ -136,7 +136,10 @@ const buttonStyle = {
   height: 30,
   width: 88,
   borderWidth: 2,
-  borderColor: Colors.accent,
+  borderColor: Colors.primary,
+  shadowColor: "black",
+  shadowRadius: 8,
+  shadowOpacity: 0.05,
 };
 
 const orderButton = {
