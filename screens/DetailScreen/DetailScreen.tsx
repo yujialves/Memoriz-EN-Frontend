@@ -1,5 +1,11 @@
 import React from "react";
-import { View, StyleSheet, Dimensions, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import Chart from "react-apexcharts";
 import options from "../../options/chartOption";
 import { Subjects } from "../../store/reducers/subjectsReducer";
@@ -49,6 +55,11 @@ const DetailScreen: React.FC<Props> = (props) => {
       <View style={styles.buttonContainer}>
         <StartButton subjectId={props.route!.params.subjectId} />
       </View>
+      <View style={styles.questionButtonContainer}>
+        <TouchableOpacity style={styles.questionsBtn}>
+          <Text style={styles.questionButtonText}>問題一覧</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -64,6 +75,28 @@ const styles = StyleSheet.create({
   buttonContainer: {
     paddingTop: 40,
     alignItems: "center",
+  },
+  questionButtonContainer: {
+    alignItems: "center",
+    paddingTop: 28,
+  },
+  questionsBtn: {
+    width: 200,
+    height: 40,
+    borderColor: "orange",
+    borderWidth: 2,
+    borderRadius: 10,
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "black",
+    shadowRadius: 8,
+    shadowOpacity: 0.1,
+  },
+  questionButtonText: {
+    fontWeight: "bold",
+    color: Colors.boldText,
+    fontSize: 16,
   },
 });
 
