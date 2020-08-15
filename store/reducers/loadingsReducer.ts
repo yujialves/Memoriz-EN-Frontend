@@ -4,11 +4,13 @@ type Action = {
   type: string;
   isLoadingQuestion: boolean;
   isLoging: boolean;
+  isFetchingQuestionList: boolean;
 };
 
 const initialState = {
   isLoadingQuestion: false,
   isLoging: false,
+  isFetchingQuestionList: false,
 };
 
 const subjectsReducer = (state = initialState, action: Action) => {
@@ -22,6 +24,11 @@ const subjectsReducer = (state = initialState, action: Action) => {
       return {
         ...state,
         isLoging: action.isLoging,
+      };
+    case actionTypes.SET_FETCHING_QUESTION_LIST:
+      return {
+        ...state,
+        isFetchingQuestionList: action.isFetchingQuestionList,
       };
   }
   return state;
