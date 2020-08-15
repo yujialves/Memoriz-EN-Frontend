@@ -1,6 +1,6 @@
 export default {
   primary: "lightskyblue",
-  accent: "rgb(36, 130, 189)",
+  accent: "rgb(82, 161, 211)",
   tintColor: "white",
   boldText: "#777",
   border: "#999",
