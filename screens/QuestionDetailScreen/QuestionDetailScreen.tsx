@@ -23,7 +23,7 @@ const QuestionDetailScreen: React.FC<Props> = (props) => {
       <View style={styles.container}>
         <Text style={styles.title}>正解：</Text>
         <Text style={styles.content}>
-          {props.route!.params.question.question}
+          {props.route!.params.question.answer}
         </Text>
       </View>
       <Divider />

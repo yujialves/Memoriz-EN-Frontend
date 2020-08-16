@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     paddingTop: 28,
+    paddingBottom: 16,
     alignItems: "center",
   },
   questionButtonContainer: {

@@ -13,7 +13,10 @@ const WebScreen: React.FC = () => {
       </View>
       <View style={styles.textContainer}>
         <Text style={styles.description}>
-          このアプリではPWAとして使用することを推奨しています。アプリをホーム画面に追加してください。
+          このアプリをPWAとして使用することを推奨します。
+        </Text>
+        <Text style={styles.description}>
+          アプリをホーム画面に追加してください。
         </Text>
       </View>
     </View>
