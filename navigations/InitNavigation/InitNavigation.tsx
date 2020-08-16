@@ -4,6 +4,7 @@ import HomeNavigation from "../HomeNavigation/HomeNavigation";
 import LoginScreen from "../../screens/LoginScreen/LoginScreen";
 import * as authAction from "../../store/actions/auth";
 import Spinner from "../../components/Spinner/Spinner";
+import WebScreen from "../../screens/WebScreen/WebScreen";
 
 const InitNavigation: React.FC = () => {
   const dispatch = useDispatch();
@@ -35,6 +36,10 @@ const InitNavigation: React.FC = () => {
 
     setIsLoading(false);
   }, [dispatch]);
+
+  if (!window.matchMedia("(display-mode: standalone)").matches) {
+    return <WebScreen />;
+  }
 
   if (isLoading) {
     return <Spinner width={40} height={40} />;

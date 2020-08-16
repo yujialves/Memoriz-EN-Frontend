@@ -9,8 +9,6 @@ import { RouteProp } from "@react-navigation/native";
 import QuestionListScreen from "../../screens/QuestionListScreen/QuestionListScreen";
 import { Question } from "../../store/reducers/questionListReducer";
 import QuestionDetailScreen from "../../screens/QuestionDetailScreen/QuestionDetailScreen";
-import { Platform } from "react-native";
-import WebScreen from "../../screens/WebScreen/WebScreen";
 
 const StackNavigator = createStackNavigator();
 
@@ -29,10 +27,6 @@ const HomeNavigation: React.FC = () => {
   const started = useSelector(
     (state: { start: { started: boolean } }) => state.start.started
   );
-
-  if (!window.matchMedia("(display-mode: standalone)").matches) {
-    return <WebScreen />;
-  }
 
   if (started) {
     return <QuestionScreen />;
