@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import QuestionScreen from "../../screens/QuestionScreen/QuestionScreen";
 import { RouteProp } from "@react-navigation/native";
 import QuestionListScreen from "../../screens/QuestionListScreen/QuestionListScreen";
+import { Question } from "../../store/reducers/questionListReducer";
+import QuestionDetailScreen from "../../screens/QuestionDetailScreen/QuestionDetailScreen";
 
 const StackNavigator = createStackNavigator();
 
@@ -14,6 +16,7 @@ export type RootStackParamList = {
   Subjects: undefined;
   Detail: { subjectId: number; subjectName: string };
   QuestionList: { subjectId: number };
+  QuestionDetail: { question: Question };
 };
 
 type RootContainer = {
@@ -60,6 +63,14 @@ const HomeNavigation: React.FC = () => {
         component={QuestionListScreen}
         options={{
           title: "問題一覧",
+        }}
+        data-test="screen"
+      />
+      <StackNavigator.Screen
+        name="QuestionDetail"
+        component={QuestionDetailScreen}
+        options={{
+          title: "問題詳細画面",
         }}
         data-test="screen"
       />

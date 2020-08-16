@@ -59,6 +59,11 @@ const QuestionListScreen: React.FC<Props> = (props) => {
             <TouchableOpacity
               style={styles.questionContainer}
               activeOpacity={0.7}
+              onPress={() =>
+                props.navigation!.navigate("QuestionDetail", {
+                  question,
+                })
+              }
             >
               <View style={styles.question}>
                 <Text numberOfLines={1} style={styles.questionLabel}>

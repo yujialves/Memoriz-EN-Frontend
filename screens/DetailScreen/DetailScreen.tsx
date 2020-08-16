@@ -51,6 +51,8 @@ const DetailScreen: React.FC<Props> = (props) => {
       <GradesTransitionView
         gradeDown={subject.inCorrectCount}
         gradeUp={subject.correctCount}
+        gradeDownText="今日の不正解数"
+        gradeUpText="今日の正解数"
       />
       <View style={styles.questionButtonContainer}>
         <TouchableOpacity

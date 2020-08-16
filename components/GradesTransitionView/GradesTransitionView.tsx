@@ -5,6 +5,8 @@ import Colors from "../../constants/Colors";
 type Props = {
   gradeUp: number;
   gradeDown: number;
+  gradeUpText: string;
+  gradeDownText: string;
 };
 
 const GradesTransitionView: React.FC<Props> = (props) => {
@@ -12,7 +14,7 @@ const GradesTransitionView: React.FC<Props> = (props) => {
     <View style={styles.gradesContainer}>
       <View style={styles.gradeContainer}>
         <Text style={styles.gradeTitle} data-test="title">
-          今日の不正解数
+          {props.gradeDownText}
         </Text>
         <View style={styles.gradeTextContainer}>
           <Text style={styles.gradeText} data-test="grade-changes">
@@ -22,7 +24,7 @@ const GradesTransitionView: React.FC<Props> = (props) => {
       </View>
       <View style={styles.gradeContainer}>
         <Text style={styles.gradeTitle} data-test="title">
-          今日の正解数
+          {props.gradeUpText}
         </Text>
         <View style={styles.gradeTextContainer}>
           <Text style={styles.gradeText} data-test="grade-changes">
