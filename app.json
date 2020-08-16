@@ -7,8 +7,7 @@
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "resizeMode": "cover"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -17,7 +16,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "icon": "./assets/icon.png",
+      "splash": {
+        "resizeMode": "cover",
+        "image": "./assets/splash.png",
+        "userInterfaceStyle": "automatic"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
