@@ -1,8 +1,18 @@
 import React from "react";
 import { View, StyleSheet, Image, Dimensions } from "react-native";
 import LoginForm from "../../components/LoginForm/LoginForm";
+import { useSelector } from "react-redux";
+import Spinner from "../../components/Spinner/Spinner";
 
 const LoginScreen: React.FC = () => {
+  const isLoging = useSelector(
+    (state: { loadings: { isLoging: boolean } }) => state.loadings.isLoging
+  );
+
+  if (isLoging) {
+    return <Spinner width={40} height={40} />;
+  }
+
   return (
     <View style={styles.screen}>
       <View style={styles.logoContainer}>
