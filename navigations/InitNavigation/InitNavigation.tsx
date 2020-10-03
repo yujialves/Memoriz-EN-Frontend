@@ -37,9 +37,9 @@ const InitNavigation: React.FC = () => {
     setIsLoading(false);
   }, [dispatch]);
 
-  if (!window.matchMedia("(display-mode: standalone)").matches) {
-    return <WebScreen />;
-  }
+//   if (!window.matchMedia("(display-mode: standalone)").matches) {
+//     return <WebScreen />;
+//   }
 
   if (isLoading) {
     return <Spinner width={40} height={40} />;
