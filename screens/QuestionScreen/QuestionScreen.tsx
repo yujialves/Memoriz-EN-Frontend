@@ -64,6 +64,7 @@ const QuestionScreen: React.FC = () => {
       }
     );
     const buffer: ArrayBuffer = res.data;
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
     const ctx = new AudioContext();
     ctx.decodeAudioData(buffer).then((buffer) => {
       setAudioBuffer(buffer);
