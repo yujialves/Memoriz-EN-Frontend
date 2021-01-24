@@ -12,6 +12,7 @@ type Props = {
   grade: number;
   rest: number;
   disablePlay: boolean;
+  disableBingPlay: boolean;
   onSpeech: () => void;
   onBing: () => void;
 };
@@ -59,7 +60,11 @@ const HeaderController: React.FC<Props> = (props) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.playButton}
+            style={
+              !("speechSynthesis" in window) || props.disablePlay
+                ? styles.disabledButton
+                : styles.playButton
+            }
             activeOpacity={0.7}
             disabled={!("speechSynthesis" in window) || props.disablePlay}
             onPress={props.onSpeech}
@@ -68,18 +73,42 @@ const HeaderController: React.FC<Props> = (props) => {
             <Ionicons
               name="ios-musical-note"
               size={24}
-              color="orange"
+              color={
+                !("speechSynthesis" in window) || props.disablePlay
+                  ? Colors.boldText
+                  : "orange"
+              }
               data-test="icon"
             />
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.playButton}
+            style={
+              !("speechSynthesis" in window) ||
+              props.disablePlay ||
+              props.disableBingPlay
+                ? styles.disabledButton
+                : styles.activeBingButton
+            }
             activeOpacity={0.7}
-            disabled={!("speechSynthesis" in window) || props.disablePlay}
+            disabled={
+              !("speechSynthesis" in window) ||
+              props.disablePlay ||
+              props.disableBingPlay
+            }
             onPress={props.onBing}
             data-test="play-button"
           >
-            <Text style={styles.bingText}>Bing</Text>
+            <Text
+              style={
+                !("speechSynthesis" in window) ||
+                props.disablePlay ||
+                props.disableBingPlay
+                  ? styles.disabledText
+                  : styles.activeBingText
+              }
+            >
+              Bing
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -129,8 +158,28 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  bingText: {
-    color: "orange",
+  disabledButton: {
+    ...buttonStyles,
+    alignSelf: "flex-end",
+    marginTop: 8,
+    borderColor: Colors.boldText,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  activeBingButton: {
+    ...buttonStyles,
+    alignSelf: "flex-end",
+    marginTop: 8,
+    borderColor: "springgreen",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  disabledText: {
+    color: Colors.boldText,
+    fontWeight: "bold",
+  },
+  activeBingText: {
+    color: "springgreen",
     fontWeight: "bold",
   },
 });

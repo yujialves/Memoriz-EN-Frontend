@@ -10,7 +10,7 @@ import Colors from "../../constants/Colors";
 import BottomController from "../../components/BottomController/BottomController";
 import * as questionActions from "../../store/actions/question";
 import { baseURL } from "../../secrets/constants";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 const QuestionScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -34,10 +34,36 @@ const QuestionScreen: React.FC = () => {
   );
 
   const [showAnswer, setShowAnswer] = useState(false);
+  const [bingRes, setBingRes] = useState(null as null | AxiosResponse<any>);
 
   useEffect(() => {
     dispatch(getQuestion(subjectId, token));
   }, [dispatch]);
+
+  useEffect(() => {
+    const load = async () => {
+      await loadBingSource();
+    };
+    load();
+  }, [question]);
+
+  const loadBingSource = async () => {
+    const res = await axios.post(
+      baseURL + "question/bing",
+      JSON.stringify({
+        word: /[ぁ-んァ-ン一-龥]/.test(question.question)
+          ? question.answer
+          : question.question,
+      }),
+      {
+        responseType: "arraybuffer",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+    setBingRes(res);
+  };
 
   const onSpeech = () => {
     const uttr = new SpeechSynthesisUtterance(
@@ -48,17 +74,7 @@ const QuestionScreen: React.FC = () => {
   };
 
   const onBingSpeech = async () => {
-    const res = await axios.post(
-      baseURL + "question/bing",
-      JSON.stringify({ word: showAnswer ? question.answer : question.question, }),
-      { 
-        responseType: "arraybuffer",
-        headers: {
-          Authorization: "Bearer " + token,
-        } 
-      }
-    );
-    const buffer: ArrayBuffer = res.data;
+    const buffer: ArrayBuffer = bingRes!.data;
     const ctx = new AudioContext();
     const source = ctx.createBufferSource();
     ctx.decodeAudioData(buffer).then((buffer) => {
@@ -69,11 +85,13 @@ const QuestionScreen: React.FC = () => {
   };
 
   const onCorrect = () => {
+    setBingRes(null);
     dispatch(questionActions.correctAnwer(question.id, subjectId, token));
     setShowAnswer(false);
   };
 
   const onInCorrect = () => {
+    setBingRes(null);
     dispatch(questionActions.inCorrectAnwer(question.id, subjectId, token));
     setShowAnswer(false);
   };
@@ -89,6 +107,7 @@ const QuestionScreen: React.FC = () => {
         disablePlay={/[ぁ-んァ-ン一-龥]/.test(
           showAnswer ? question.answer : question.question
         )}
+        disableBingPlay={bingRes == null}
       />
       <View style={styles.questionContainer}>
         {isLoadingQuestion ? (
