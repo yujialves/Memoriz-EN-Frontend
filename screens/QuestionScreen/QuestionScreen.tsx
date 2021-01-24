@@ -36,6 +36,7 @@ const QuestionScreen: React.FC = () => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [audioBuffer, setAudioBuffer] = useState(null as null | AudioBuffer);
   const [audioContext, setAudioContext] = useState(null as null | AudioContext);
+  const [failedToLoad, setFailedToLoad] = useState(false);
 
   useEffect(() => {
     dispatch(getQuestion(subjectId, token));
@@ -50,6 +51,7 @@ const QuestionScreen: React.FC = () => {
   }, [question]);
 
   const loadBingSource = async () => {
+    setFailedToLoad(false);
     const res = await axios.post(
       baseURL + "question/bing",
       JSON.stringify({
@@ -64,6 +66,8 @@ const QuestionScreen: React.FC = () => {
         },
       }
     );
+    console.log(res);
+    console.log(res.data);
     if (res.status === 200) {
       const buffer: ArrayBuffer = res.data;
       const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -78,6 +82,8 @@ const QuestionScreen: React.FC = () => {
           console.log(err);
         }
       );
+    } else {
+      setFailedToLoad(true);
     }
   };
 
@@ -122,6 +128,7 @@ const QuestionScreen: React.FC = () => {
           showAnswer ? question.answer : question.question
         )}
         disableBingPlay={audioBuffer == null || audioContext == null}
+        failedToLoad={failedToLoad}
       />
       <View style={styles.questionContainer}>
         {isLoadingQuestion ? (

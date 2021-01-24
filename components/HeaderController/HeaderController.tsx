@@ -11,6 +11,7 @@ type Props = {
   subject: string;
   grade: number;
   rest: number;
+  failedToLoad: boolean;
   disablePlay: boolean;
   disableBingPlay: boolean;
   onSpeech: () => void;
@@ -83,9 +84,11 @@ const HeaderController: React.FC<Props> = (props) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={
-              !("speechSynthesis" in window) ||
-              props.disablePlay ||
-              props.disableBingPlay
+              props.failedToLoad
+                ? styles.failedButton
+                : !("speechSynthesis" in window) ||
+                  props.disablePlay ||
+                  props.disableBingPlay
                 ? styles.disabledButton
                 : styles.activeBingButton
             }
@@ -100,9 +103,11 @@ const HeaderController: React.FC<Props> = (props) => {
           >
             <Text
               style={
-                !("speechSynthesis" in window) ||
-                props.disablePlay ||
-                props.disableBingPlay
+                props.failedToLoad
+                  ? styles.failedButton
+                  : !("speechSynthesis" in window) ||
+                    props.disablePlay ||
+                    props.disableBingPlay
                   ? styles.disabledText
                   : styles.activeBingText
               }
@@ -163,6 +168,14 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     marginTop: 8,
     borderColor: Colors.border,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  failedButton: {
+    ...buttonStyles,
+    alignSelf: "flex-end",
+    marginTop: 8,
+    borderColor: "red",
     justifyContent: "center",
     alignItems: "center",
   },
