@@ -9,6 +9,8 @@ import Spinner from "../../components/Spinner/Spinner";
 import Colors from "../../constants/Colors";
 import BottomController from "../../components/BottomController/BottomController";
 import * as questionActions from "../../store/actions/question";
+import { baseURL } from "../../secrets/constants";
+import axios from "axios";
 
 const QuestionScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -45,6 +47,27 @@ const QuestionScreen: React.FC = () => {
     speechSynthesis.speak(uttr);
   };
 
+  const onBingSpeech = async () => {
+    const res = await axios.post(
+      baseURL + "question/bing",
+      JSON.stringify({ word: showAnswer ? question.answer : question.question, }),
+      { 
+        responseType: "arraybuffer",
+        headers: {
+          Authorization: "Bearer " + token,
+        } 
+      }
+    );
+    const buffer: ArrayBuffer = res.data;
+    const ctx = new AudioContext();
+    const source = ctx.createBufferSource();
+    ctx.decodeAudioData(buffer).then((buffer) => {
+      source.buffer = buffer;
+      source.connect(ctx.destination);
+      source.start(ctx.currentTime);
+    });
+  };
+
   const onCorrect = () => {
     dispatch(questionActions.correctAnwer(question.id, subjectId, token));
     setShowAnswer(false);
@@ -62,6 +85,7 @@ const QuestionScreen: React.FC = () => {
         grade={question.grade}
         rest={question.rest}
         onSpeech={onSpeech}
+        onBing={onBingSpeech}
         disablePlay={/[ぁ-んァ-ン一-龥]/.test(
           showAnswer ? question.answer : question.question
         )}

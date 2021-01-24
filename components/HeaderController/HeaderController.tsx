@@ -13,6 +13,7 @@ type Props = {
   rest: number;
   disablePlay: boolean;
   onSpeech: () => void;
+  onBing: () => void;
 };
 
 const HeaderController: React.FC<Props> = (props) => {
@@ -71,6 +72,15 @@ const HeaderController: React.FC<Props> = (props) => {
               data-test="icon"
             />
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.playButton}
+            activeOpacity={0.7}
+            disabled={!("speechSynthesis" in window) || props.disablePlay}
+            onPress={props.onBing}
+            data-test="play-button"
+          >
+            <Text style={styles.bingText}>Bing</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -118,6 +128,10 @@ const styles = StyleSheet.create({
     borderColor: "orange",
     justifyContent: "center",
     alignItems: "center",
+  },
+  bingText: {
+    color: "orange",
+    fontWeight: "bold",
   },
 });
 

@@ -95,6 +95,12 @@ export const getQuestion = (subjectId: number, token: string) => {
   };
 };
 
+export const getSound = (word: string) => {
+  return async (dispatch: Dispatch) => {
+    
+  }
+}
+
 export const setQuestion = (question: Question) => {
   return {
     type: actionTypes.SET_QUESTION,
