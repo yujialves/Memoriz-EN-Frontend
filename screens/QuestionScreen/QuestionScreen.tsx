@@ -42,6 +42,7 @@ const QuestionScreen: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    if (question.id === 0) return;
     const load = async () => {
       await loadBingSource();
     };
@@ -63,13 +64,20 @@ const QuestionScreen: React.FC = () => {
         },
       }
     );
-    const buffer: ArrayBuffer = res.data;
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    const ctx = new AudioContext();
-    ctx.decodeAudioData(buffer).then((buffer) => {
-      setAudioBuffer(buffer);
-      setAudioContext(ctx);
-    });
+    if (res.status === 200) {
+      const buffer: ArrayBuffer = res.data;
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioContext();
+      ctx
+        .decodeAudioData(buffer)
+        .then((buffer) => {
+          setAudioBuffer(buffer);
+          setAudioContext(ctx);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
 
   const onSpeech = () => {
