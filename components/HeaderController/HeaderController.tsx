@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     ...buttonStyles,
     alignSelf: "flex-end",
     marginTop: 8,
-    borderColor: Colors.boldText,
+    borderColor: Colors.border,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     ...buttonStyles,
     alignSelf: "flex-end",
     marginTop: 8,
-    borderColor: "springgreen",
+    borderColor: "lightgreen",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   activeBingText: {
-    color: "springgreen",
+    color: "lightgreen",
     fontWeight: "bold",
   },
 });

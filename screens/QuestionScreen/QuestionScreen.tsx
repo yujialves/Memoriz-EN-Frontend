@@ -34,7 +34,8 @@ const QuestionScreen: React.FC = () => {
   );
 
   const [showAnswer, setShowAnswer] = useState(false);
-  const [bingRes, setBingRes] = useState(null as null | AxiosResponse<any>);
+  const [audioBuffer, setAudioBuffer] = useState(null as null | AudioBuffer);
+  const [audioContext, setAudioContext] = useState(null as null | AudioContext);
 
   useEffect(() => {
     dispatch(getQuestion(subjectId, token));
@@ -62,7 +63,12 @@ const QuestionScreen: React.FC = () => {
         },
       }
     );
-    setBingRes(res);
+    const buffer: ArrayBuffer = res.data;
+    const ctx = new AudioContext();
+    ctx.decodeAudioData(buffer).then((buffer) => {
+      setAudioBuffer(buffer);
+      setAudioContext(ctx);
+    });
   };
 
   const onSpeech = () => {
@@ -73,25 +79,23 @@ const QuestionScreen: React.FC = () => {
     speechSynthesis.speak(uttr);
   };
 
-  const onBingSpeech = async () => {
-    const buffer: ArrayBuffer = bingRes!.data;
-    const ctx = new AudioContext();
-    const source = ctx.createBufferSource();
-    ctx.decodeAudioData(buffer).then((buffer) => {
-      source.buffer = buffer;
-      source.connect(ctx.destination);
-      source.start(ctx.currentTime);
-    });
+  const onBingSpeech = () => {
+    const source = audioContext!.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(audioContext!.destination);
+    source.start(audioContext!.currentTime);
   };
 
   const onCorrect = () => {
-    setBingRes(null);
+    setAudioBuffer(null);
+    setAudioContext(null);
     dispatch(questionActions.correctAnwer(question.id, subjectId, token));
     setShowAnswer(false);
   };
 
   const onInCorrect = () => {
-    setBingRes(null);
+    setAudioBuffer(null);
+    setAudioContext(null);
     dispatch(questionActions.inCorrectAnwer(question.id, subjectId, token));
     setShowAnswer(false);
   };
@@ -107,7 +111,7 @@ const QuestionScreen: React.FC = () => {
         disablePlay={/[ぁ-んァ-ン一-龥]/.test(
           showAnswer ? question.answer : question.question
         )}
-        disableBingPlay={bingRes == null}
+        disableBingPlay={audioBuffer == null || audioContext == null}
       />
       <View style={styles.questionContainer}>
         {isLoadingQuestion ? (
