@@ -51,10 +51,8 @@ const QuestionScreen: React.FC = () => {
   }, [question]);
 
   useEffect(() => {
-    console.log("create audiocontext");
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     return () => {
-      console.log("close");
       audioContext.close();
     };
   });
@@ -78,8 +76,6 @@ const QuestionScreen: React.FC = () => {
       )
       .then((axiosRes) => {
         const res = axiosRes as AxiosResponse<any>;
-        console.log(res);
-        console.log(res.data);
         if (res.status === 200) {
           try {
             const buffer: ArrayBuffer = res.data;
@@ -88,25 +84,18 @@ const QuestionScreen: React.FC = () => {
               (buffer) => {
                 setAudioBuffer(buffer);
               },
-              (err) => {
-                console.log("buffer error");
-                console.log(err);
+              () => {
                 setFailedToLoad(true);
               }
             );
-          } catch (err) {
-            console.log("catch");
-            console.log(err);
+          } catch {
             setFailedToLoad(true);
           }
         } else {
-          console.log("not 200");
           setFailedToLoad(true);
         }
       })
-      .catch((err) => {
-        console.log("axios error");
-        console.log(err);
+      .catch(() => {
         setFailedToLoad(true);
       });
   };
