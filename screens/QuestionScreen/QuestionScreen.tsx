@@ -72,27 +72,36 @@ const QuestionScreen: React.FC = () => {
         console.log(res);
         console.log(res.data);
         if (res.status === 200) {
-          const buffer: ArrayBuffer = res.data;
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          const ctx = new AudioContext();
-          ctx.decodeAudioData(
-            buffer,
-            (buffer) => {
-              setAudioBuffer(buffer);
-              setAudioContext(ctx);
-            },
-            (err) => {
-              console.log("buffer error");
-              console.log(err);
-              setFailedToLoad(true);
-            }
-          );
+          try {
+            const buffer: ArrayBuffer = res.data;
+            const AudioContext =
+              window.AudioContext || window.webkitAudioContext;
+            const ctx = new AudioContext();
+            ctx.decodeAudioData(
+              buffer,
+              (buffer) => {
+                setAudioBuffer(buffer);
+                setAudioContext(ctx);
+              },
+              (err) => {
+                console.log("buffer error");
+                console.log(err);
+                setFailedToLoad(true);
+              }
+            );
+          } catch {
+            console.log("catch");
+            setFailedToLoad(true);
+          }
         } else {
+          console.log("not 200");
           setFailedToLoad(true);
         }
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log("axios error");
         console.log(err);
+        setFailedToLoad(true);
       });
   };
 
