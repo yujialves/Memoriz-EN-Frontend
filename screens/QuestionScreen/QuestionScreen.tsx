@@ -36,7 +36,7 @@ const QuestionScreen: React.FC = () => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [audioBuffer, setAudioBuffer] = useState(null as null | AudioBuffer);
   const [failedToLoad, setFailedToLoad] = useState(false);
-  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  let audioContext: AudioContext;
 
   useEffect(() => {
     dispatch(getQuestion(subjectId, token));
@@ -49,6 +49,15 @@ const QuestionScreen: React.FC = () => {
     };
     load();
   }, [question]);
+
+  useEffect(() => {
+    console.log("create audiocontext");
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    return () => {
+      console.log("close");
+      audioContext.close();
+    };
+  });
 
   const loadBingSource = async () => {
     setFailedToLoad(false);
@@ -85,9 +94,9 @@ const QuestionScreen: React.FC = () => {
                 setFailedToLoad(true);
               }
             );
-          } catch(err) {
+          } catch (err) {
             console.log("catch");
-            console.log(err)
+            console.log(err);
             setFailedToLoad(true);
           }
         } else {
