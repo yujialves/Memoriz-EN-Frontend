@@ -34,8 +34,9 @@ const QuestionScreen: React.FC = () => {
   );
 
   const [showAnswer, setShowAnswer] = useState(false);
-  const [audioBuffer, setAudioBuffer] = useState(null as null | AudioBuffer);
-  const [audioContext, setAudioContext] = useState(null as null | AudioContext);
+  const [bingRes, setBingRes] = useState(null as null | AxiosResponse<any>);
+  // const [audioBuffer, setAudioBuffer] = useState(null as null | AudioBuffer);
+  // const [audioContext, setAudioContext] = useState(null as null | AudioContext);
   const [failedToLoad, setFailedToLoad] = useState(false);
 
   useEffect(() => {
@@ -69,22 +70,27 @@ const QuestionScreen: React.FC = () => {
     console.log(res);
     console.log(res.data);
     if (res.status === 200) {
-      const buffer: ArrayBuffer = res.data;
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AudioContext();
-      ctx.decodeAudioData(
-        buffer,
-        (buffer) => {
-          setAudioBuffer(buffer);
-          setAudioContext(ctx);
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
+      setBingRes(res);
     } else {
       setFailedToLoad(true);
     }
+    // if (res.status === 200) {
+    //   const buffer: ArrayBuffer = res.data;
+    //   const AudioContext = window.AudioContext || window.webkitAudioContext;
+    //   const ctx = new AudioContext();
+    //   ctx.decodeAudioData(
+    //     buffer,
+    //     (buffer) => {
+    //       setAudioBuffer(buffer);
+    //       setAudioContext(ctx);
+    //     },
+    //     (err) => {
+    //       setFailedToLoad(true);
+    //     }
+    //   );
+    // } else {
+    //   setFailedToLoad(true);
+    // }
   };
 
   const onSpeech = () => {
@@ -96,22 +102,42 @@ const QuestionScreen: React.FC = () => {
   };
 
   const onBingSpeech = () => {
-    const source = audioContext!.createBufferSource();
-    source.buffer = audioBuffer;
-    source.connect(audioContext!.destination);
-    source.start(audioContext!.currentTime);
+    const buffer: ArrayBuffer = bingRes!.data;
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioContext();
+    ctx.decodeAudioData(
+      buffer,
+      (buffer) => {
+        // setAudioBuffer(buffer);
+        // setAudioContext(ctx);
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(ctx.destination);
+        source.start(ctx.currentTime);
+      },
+      (err) => {
+        setFailedToLoad(true);
+      }
+    );
+
+    // const source = audioContext!.createBufferSource();
+    // source.buffer = audioBuffer;
+    // source.connect(audioContext!.destination);
+    // source.start(audioContext!.currentTime);
   };
 
   const onCorrect = () => {
-    setAudioBuffer(null);
-    setAudioContext(null);
+    // setAudioBuffer(null);
+    // setAudioContext(null);
+    setBingRes(null);
     dispatch(questionActions.correctAnwer(question.id, subjectId, token));
     setShowAnswer(false);
   };
 
   const onInCorrect = () => {
-    setAudioBuffer(null);
-    setAudioContext(null);
+    // setAudioBuffer(null);
+    // setAudioContext(null);
+    setBingRes(null);
     dispatch(questionActions.inCorrectAnwer(question.id, subjectId, token));
     setShowAnswer(false);
   };
@@ -127,7 +153,8 @@ const QuestionScreen: React.FC = () => {
         disablePlay={/[ぁ-んァ-ン一-龥]/.test(
           showAnswer ? question.answer : question.question
         )}
-        disableBingPlay={audioBuffer == null || audioContext == null}
+        // disableBingPlay={audioBuffer == null || audioContext == null}
+        disableBingPlay={bingRes == null}
         failedToLoad={failedToLoad}
       />
       <View style={styles.questionContainer}>
