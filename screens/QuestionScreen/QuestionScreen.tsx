@@ -67,7 +67,6 @@ const QuestionScreen: React.FC = () => {
       }
     );
     console.log(res);
-    console.log(res.data);
     if (res.status === 200) {
       const buffer: ArrayBuffer = res.data;
       const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -79,7 +78,9 @@ const QuestionScreen: React.FC = () => {
           setAudioContext(ctx);
         },
         (err) => {
+          console.log("ERR")
           console.log(err);
+          setFailedToLoad(true);
         }
       );
     } else {
