@@ -35,8 +35,8 @@ const QuestionScreen: React.FC = () => {
 
   const [showAnswer, setShowAnswer] = useState(false);
   const [audioBuffer, setAudioBuffer] = useState(null as null | AudioBuffer);
+  const [audioContext, setAudioContext] = useState(null as null | AudioContext);
   const [failedToLoad, setFailedToLoad] = useState(false);
-  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
   useEffect(() => {
     dispatch(getQuestion(subjectId, token));
@@ -74,10 +74,14 @@ const QuestionScreen: React.FC = () => {
         if (res.status === 200) {
           try {
             const buffer: ArrayBuffer = res.data;
-            audioContext.decodeAudioData(
+            const AudioContext =
+              window.AudioContext || window.webkitAudioContext;
+            const ctx = new AudioContext();
+            ctx.decodeAudioData(
               buffer,
               (buffer) => {
                 setAudioBuffer(buffer);
+                setAudioContext(ctx);
               },
               (err) => {
                 console.log("buffer error");
@@ -119,12 +123,14 @@ const QuestionScreen: React.FC = () => {
 
   const onCorrect = () => {
     setAudioBuffer(null);
+    setAudioContext(null);
     dispatch(questionActions.correctAnwer(question.id, subjectId, token));
     setShowAnswer(false);
   };
 
   const onInCorrect = () => {
     setAudioBuffer(null);
+    setAudioContext(null);
     dispatch(questionActions.inCorrectAnwer(question.id, subjectId, token));
     setShowAnswer(false);
   };
@@ -140,7 +146,7 @@ const QuestionScreen: React.FC = () => {
         disablePlay={/[ぁ-んァ-ン一-龥]/.test(
           showAnswer ? question.answer : question.question
         )}
-        disableBingPlay={audioBuffer == null}
+        disableBingPlay={audioBuffer == null || audioContext == null}
         failedToLoad={failedToLoad}
       />
       <View style={styles.questionContainer}>
