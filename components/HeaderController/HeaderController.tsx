@@ -104,7 +104,7 @@ const HeaderController: React.FC<Props> = (props) => {
             <Text
               style={
                 props.failedToLoad
-                  ? styles.failedButton
+                  ? styles.failedBingText
                   : !("speechSynthesis" in window) ||
                     props.disablePlay ||
                     props.disableBingPlay
@@ -193,6 +193,10 @@ const styles = StyleSheet.create({
   },
   activeBingText: {
     color: "lightgreen",
+    fontWeight: "bold",
+  },
+  failedBingText: {
+    color: "red",
     fontWeight: "bold",
   },
 });

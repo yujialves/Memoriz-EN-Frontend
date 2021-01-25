@@ -89,8 +89,9 @@ const QuestionScreen: React.FC = () => {
                 setFailedToLoad(true);
               }
             );
-          } catch {
+          } catch(err) {
             console.log("catch");
+            console.log(err)
             setFailedToLoad(true);
           }
         } else {
