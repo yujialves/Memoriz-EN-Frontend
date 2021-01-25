@@ -52,40 +52,48 @@ const QuestionScreen: React.FC = () => {
 
   const loadBingSource = async () => {
     setFailedToLoad(false);
-    const res = await axios.post(
-      baseURL + "question/bing",
-      JSON.stringify({
-        word: /[ぁ-んァ-ン一-龥]/.test(question.question)
-          ? question.answer
-          : question.question,
-      }),
-      {
-        responseType: "arraybuffer",
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      }
-    );
-    console.log(res);
-    if (res.status === 200) {
-      const buffer: ArrayBuffer = res.data;
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AudioContext();
-      ctx.decodeAudioData(
-        buffer,
-        (buffer) => {
-          setAudioBuffer(buffer);
-          setAudioContext(ctx);
-        },
-        (err) => {
-          console.log("ERR")
-          console.log(err);
+    await axios
+      .post(
+        baseURL + "question/bing",
+        JSON.stringify({
+          word: /[ぁ-んァ-ン一-龥]/.test(question.question)
+            ? question.answer
+            : question.question,
+        }),
+        {
+          responseType: "arraybuffer",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
+      .then((axiosRes) => {
+        const res = axiosRes as AxiosResponse<any>;
+        console.log(res);
+        console.log(res.data);
+        if (res.status === 200) {
+          const buffer: ArrayBuffer = res.data;
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          const ctx = new AudioContext();
+          ctx.decodeAudioData(
+            buffer,
+            (buffer) => {
+              setAudioBuffer(buffer);
+              setAudioContext(ctx);
+            },
+            (err) => {
+              console.log("buffer error");
+              console.log(err);
+              setFailedToLoad(true);
+            }
+          );
+        } else {
           setFailedToLoad(true);
         }
-      );
-    } else {
-      setFailedToLoad(true);
-    }
+      }).catch((err) => {
+        console.log("axios error");
+        console.log(err);
+      });
   };
 
   const onSpeech = () => {
