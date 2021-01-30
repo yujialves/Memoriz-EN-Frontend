@@ -1,9 +1,9 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { call, fork, put, select } from "redux-saga/effects";
 import { baseURL } from "../../secrets/constants";
 import { Question } from "../question/question.reducer";
 import { AudioInfo } from "./bing.reducer";
-import * as bingAction from './bing.action'
+import * as bingAction from "./bing.action";
 
 export function* loadBingSourceSaga(action: {
   type: string;
@@ -11,7 +11,7 @@ export function* loadBingSourceSaga(action: {
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void;
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void;
 }) {
-  console.log('load')
+  console.log("load");
   // ロード失敗を初期化
   yield action.setFailedToLoad(false);
 
@@ -57,7 +57,7 @@ function* fetchBingSourceSaga(
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void
 ) {
-  console.log('fetch')
+  console.log("fetch");
   const token: string = yield select(
     (state: { auth: { token: string } }) => state.auth.token
   );
@@ -98,7 +98,8 @@ function* fetchBingSourceSaga(
       setFailedToLoad
     );
     // 音声をメモリに保存
-    yield put(bingAction.storeAudioInfo(word, buffer))
+    console.log('fetch', buffer);
+    yield put(bingAction.storeAudioInfo(word, buffer));
   } else {
     yield setFailedToLoad(true);
   }
@@ -110,7 +111,7 @@ function* decodeAudioData(
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void
 ) {
-  console.log('decode')
+  console.log("decode");
   try {
     audioContext.decodeAudioData(
       buffer,
@@ -122,7 +123,7 @@ function* decodeAudioData(
       }
     );
   } catch (err) {
-    console.log(err)
+    console.log(err);
     yield setFailedToLoad(true);
   }
 }
