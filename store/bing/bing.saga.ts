@@ -305,15 +305,19 @@ export function* clearAudioInfosSaga() {
 }
 
 export function* watchFetchChannel() {
+  console.log("fetchChannel");
   while (true) {
     const action = yield take(fetchChannel);
+    console.log("put fetch");
     yield put(action);
   }
 }
 
 export function* watchDecodeChannel() {
+  console.log("decodeChannel");
   while (true) {
     const action = yield take(decodeChannel);
+    console.log("put decode");
     yield put(action);
   }
 }
