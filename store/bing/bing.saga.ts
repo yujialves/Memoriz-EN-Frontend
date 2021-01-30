@@ -20,6 +20,7 @@ export function* loadBingSourceSaga(action: {
     ? question.answer
     : question.question;
   console.log("word", word);
+  console.log(action.audioContext)
 
   // メモリーにaudioが保存されているかを確認
   const audioInfos: AudioInfo[] = yield select(
@@ -62,6 +63,7 @@ function* fetchBingSourceSaga(
   );
 
   console.log("call");
+  console.log(audioContext)
   const { status, data } = yield call(() =>
     axios
       .post(
@@ -114,6 +116,7 @@ function* decodeAudioData(
 ) {
   try {
     console.log("try");
+    console.log(audioContext)
     audioContext.decodeAudioData(
       buffer,
       (buffer) => {
