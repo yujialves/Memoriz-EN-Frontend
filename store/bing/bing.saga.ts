@@ -46,23 +46,39 @@ export function* loadBingSourceSaga(action: {
         const store = trans.objectStore("audioInfos");
         const getReq = store.get(word);
 
-        // 保存されていれば
+        // リクエスト成功したら
         getReq.onsuccess = (event) => {
           console.log("getReq.onsuccess");
-          const audioInfo = (<IDBRequest>event.target).result as AudioInfo;
-          // デコード
-          fork(
-            decodeAudioData,
-            audioInfo.buffer,
-            action.audioContext,
-            action.setAudioBuffer,
-            action.setFailedToLoad
-          );
+          const audioInfo = (<IDBRequest>event.target).result as
+            | AudioInfo
+            | undefined;
+          // 音声が保存されていなければ
+          if (audioInfo === undefined) {
+            // サーバからフェッチ
+            fork(
+              fetchBingSourceSaga,
+              question.id,
+              word,
+              action.audioContext,
+              action.setAudioBuffer,
+              action.setFailedToLoad
+            );
+          } else {
+            // デコード
+            fork(
+              decodeAudioData,
+              audioInfo.buffer,
+              action.audioContext,
+              action.setAudioBuffer,
+              action.setFailedToLoad
+            );
+          }
         };
 
-        // 保存されていなければ
+        // エラーが起きたら
         getReq.onerror = () => {
           console.log("getReq.onerror");
+          // サーバからフェッチ
           fork(
             fetchBingSourceSaga,
             question.id,
@@ -244,7 +260,9 @@ export function* clearAudioInfosSaga() {
     request.onsuccess = (event) => {
       console.log("request.onsuccess");
       const db: IDBDatabase = (<IDBRequest>event.target).result;
-      db.deleteObjectStore("audioInfos");
+      if (!db.objectStoreNames.contains("audioInfos")) {
+        db.deleteObjectStore("audioInfos");
+      }
       db.close();
     };
 
