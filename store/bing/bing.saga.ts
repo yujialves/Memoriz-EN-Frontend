@@ -6,7 +6,7 @@ import * as bingActions from "./bing.action";
 
 type AudioInfo = {
   word: string;
-  buffer: ArrayBuffer;
+  buffer: string;
 };
 
 export function* loadBingSourceSaga(action: {
@@ -93,7 +93,7 @@ export function* loadBingSourceSaga(action: {
             // デコード
             yield put(
               bingActions.decodeAudioData(
-                audioInfo.buffer,
+                JSON.parse(audioInfo.buffer),
                 action.audioContext,
                 action.setAudioBuffer,
                 action.setFailedToLoad
@@ -267,7 +267,7 @@ function* storeAudioInfo(word: string, buffer: ArrayBuffer) {
       const store: IDBObjectStore = yield trans.objectStore("audioInfos");
       const putReq: IDBRequest<IDBValidKey> = yield store.put({
         word: word,
-        buffer: buffer,
+        buffer: JSON.stringify(buffer),
       });
 
       const putReqSuccessEvent = yield call(putReqOnsuccess, putReq);
