@@ -9,13 +9,19 @@ export function* loadBingSourceSaga(action: {
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void;
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void;
 }) {
+  // ロード失敗を初期化
   yield action.setFailedToLoad(false);
+
   const question = yield select(
     (state: { question: Question }) => state.question
   );
   const token = yield select(
     (state: { auth: { token: string } }) => state.auth.token
   );
+
+  //
+
+  console.log("call");
   const { status, data } = yield call(() =>
     axios
       .post(
@@ -33,18 +39,22 @@ export function* loadBingSourceSaga(action: {
         }
       )
       .then((res) => {
+        console.log("then");
         const status = res.status;
         const data = res.data;
         return { status, data };
       })
       .catch((error) => {
+        console.log("catch");
         const status = error.response.status;
         const data = error.response.data;
         return { status, data };
       })
   );
+  console.log(status, data);
   if (status === 200) {
     try {
+      console.log("try");
       const buffer: ArrayBuffer = data;
       action.audioContext.decodeAudioData(
         buffer,
@@ -56,9 +66,11 @@ export function* loadBingSourceSaga(action: {
         }
       );
     } catch {
+      console.log("catch2");
       yield action.setFailedToLoad(true);
     }
   } else {
+    console.log("else");
     yield action.setFailedToLoad(true);
   }
 }
