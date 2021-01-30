@@ -43,6 +43,7 @@ export function* loadBingSourceSaga(action: {
     // 保存されていなければサーバーからフェッチ
     yield fork(
       fetchBingSourceSaga,
+      question.id,
       word,
       action.audioContext,
       action.setAudioBuffer,
@@ -52,6 +53,7 @@ export function* loadBingSourceSaga(action: {
 }
 
 function* fetchBingSourceSaga(
+  id: number,
   word: string,
   audioContext: AudioContext,
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
@@ -67,6 +69,7 @@ function* fetchBingSourceSaga(
       .post(
         baseURL + "question/bing",
         {
+          id,
           word,
         },
         {
@@ -89,7 +92,12 @@ function* fetchBingSourceSaga(
   );
   if (status === 200) {
     const buffer: ArrayBuffer = data;
+    // 音声をメモリに保存
+    console.log("data", data);
+    console.log("fetch1", buffer);
+    yield put(bingAction.storeAudioInfo(word, buffer));
     // デコード
+    console.log("fetch2", buffer);
     yield fork(
       decodeAudioData,
       buffer,
@@ -97,9 +105,6 @@ function* fetchBingSourceSaga(
       setAudioBuffer,
       setFailedToLoad
     );
-    // 音声をメモリに保存
-    console.log('fetch', buffer);
-    yield put(bingAction.storeAudioInfo(word, buffer));
   } else {
     yield setFailedToLoad(true);
   }
@@ -112,6 +117,7 @@ function* decodeAudioData(
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void
 ) {
   console.log("decode");
+  console.log("deode", buffer);
   try {
     audioContext.decodeAudioData(
       buffer,
