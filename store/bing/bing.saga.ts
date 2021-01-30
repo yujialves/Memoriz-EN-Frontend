@@ -39,29 +39,47 @@ export function* loadBingSourceSaga(action: {
 
     // 接続成功時
     yield (request.onsuccess = (event) => {
-      console.log("request.onsuccess");
-      const db: IDBDatabase = (<IDBRequest>event.target).result;
-      const trans = db.transaction("audioInfos", "readwrite");
-      const store = trans.objectStore("audioInfos");
-      const getReq = store.get(word);
+      try {
+        console.log("request.onsuccess");
+        const db: IDBDatabase = (<IDBRequest>event.target).result;
+        const trans = db.transaction("audioInfos", "readwrite");
+        const store = trans.objectStore("audioInfos");
+        const getReq = store.get(word);
 
-      // 保存されていれば
-      getReq.onsuccess = (event) => {
-        console.log("getReq.onsuccess");
-        const audioInfo = (<IDBRequest>event.target).result as AudioInfo;
-        // デコード
-        fork(
-          decodeAudioData,
-          audioInfo.buffer,
-          action.audioContext,
-          action.setAudioBuffer,
-          action.setFailedToLoad
-        );
-      };
+        // 保存されていれば
+        getReq.onsuccess = (event) => {
+          console.log("getReq.onsuccess");
+          const audioInfo = (<IDBRequest>event.target).result as AudioInfo;
+          // デコード
+          fork(
+            decodeAudioData,
+            audioInfo.buffer,
+            action.audioContext,
+            action.setAudioBuffer,
+            action.setFailedToLoad
+          );
+        };
 
-      // 保存されていなければ
-      getReq.onerror = () => {
-        console.log("getReq.onerror");
+        // 保存されていなければ
+        getReq.onerror = () => {
+          console.log("getReq.onerror");
+          fork(
+            fetchBingSourceSaga,
+            question.id,
+            word,
+            action.audioContext,
+            action.setAudioBuffer,
+            action.setFailedToLoad
+          );
+        };
+
+        trans.oncomplete = () => {
+          console.log("トランザクション終了");
+        };
+
+        db.close();
+      } catch (err) {
+        // objectStoreが作成されていなければ
         fork(
           fetchBingSourceSaga,
           question.id,
@@ -70,13 +88,7 @@ export function* loadBingSourceSaga(action: {
           action.setAudioBuffer,
           action.setFailedToLoad
         );
-      };
-
-      trans.oncomplete = () => {
-        console.log("トランザクション終了");
-      };
-
-      db.close();
+      }
     });
 
     // 接続失敗時
