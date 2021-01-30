@@ -53,7 +53,8 @@ export function* loadBingSourceSaga(action: {
             | AudioInfo
             | undefined;
           // 音声が保存されていなければ
-          if (audioInfo === undefined) {
+          console.log(audioInfo);
+          if (audioInfo == undefined) {
             // サーバからフェッチ
             fork(
               fetchBingSourceSaga,
