@@ -19,7 +19,7 @@ const initialState = {
   buffer: null,
 };
 
-const subjectsReducer = (state = initialState, action: Action) => {
+const bingReducer = (state = initialState, action: Action) => {
   switch (action.type) {
     case bingTypes.STORE_AUDIO_INFO:
       return {
@@ -40,4 +40,4 @@ const subjectsReducer = (state = initialState, action: Action) => {
   return state;
 };
 
-export default subjectsReducer;
+export default bingReducer;
