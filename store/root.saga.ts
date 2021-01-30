@@ -4,6 +4,6 @@ import * as bingSagas from "../store/bing/bing.saga";
 
 export default function* rootSaga() {
   yield all([
-    takeLatest(bingTypes.LOAD_FROM_SERVER, bingSagas.loadFromServerSaga),
+    takeLatest(bingTypes.LOAD_BING_SOURCE, bingSagas.loadBingSourceSaga),
   ]);
 }
