@@ -3,7 +3,7 @@ import { StyleSheet, View, Text } from "react-native";
 import FormInput from "../FormInput/FormInput";
 import BigButton from "../BigButton/BigButton";
 import { useDispatch, useSelector } from "react-redux";
-import * as authActions from "../../store/actions/auth";
+import * as authActions from "../../store/auth/auth.action";
 
 const LoginForm: React.FC = () => {
   const dispatch = useDispatch();

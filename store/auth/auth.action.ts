@@ -1,6 +1,6 @@
-import * as actionTypes from "./actionTypes";
+import * as actionTypes from "./auth.type";
 import { Dispatch } from "redux";
-import * as loadingsAction from "./loadings";
+import * as loadingsAction from "../loadings/loadings.action";
 import axios from "axios";
 import { baseURL } from "../../secrets/constants";
 

@@ -1,4 +1,4 @@
-import * as actionTypes from "../actions/actionTypes";
+import * as actionTypes from "./subjects.type";
 
 export type Subjects = Array<{
   subjectId: number;

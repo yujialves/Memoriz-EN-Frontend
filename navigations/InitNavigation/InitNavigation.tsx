@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import HomeNavigation from "../HomeNavigation/HomeNavigation";
 import LoginScreen from "../../screens/LoginScreen/LoginScreen";
-import * as authAction from "../../store/actions/auth";
+import * as authAction from "../../store/auth/auth.action";
 import Spinner from "../../components/Spinner/Spinner";
 import WebScreen from "../../screens/WebScreen/WebScreen";
 

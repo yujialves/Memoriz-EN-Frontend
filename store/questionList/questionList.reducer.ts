@@ -1,4 +1,4 @@
-import * as actionTypes from "../actions/actionTypes";
+import * as actionTypes from "./questionList.type";
 
 type Action = {
   type: string;

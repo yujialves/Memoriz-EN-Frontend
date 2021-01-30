@@ -8,8 +8,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import * as subjectsActions from "../../store/actions/subjects";
-import { Subjects, Grades } from "../../store/reducers/subjectsReducer";
+import * as subjectsActions from "../../store/subjects/subjects.action";
+import { Subjects, Grades } from "../../store/subjects/subjects.reducer";
 import Colors from "../../constants/Colors";
 import Spinner from "../../components/Spinner/Spinner";
 import { StackNavigationProp } from "@react-navigation/stack";

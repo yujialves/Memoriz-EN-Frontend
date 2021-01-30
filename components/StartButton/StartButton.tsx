@@ -4,7 +4,7 @@ import Colors from "../../constants/Colors";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigations/HomeNavigation/HomeNavigation";
 import { useDispatch } from "react-redux";
-import { setStarted } from "../../store/actions/start";
+import { setStarted } from "../../store/start/start.action";
 
 type Props = {
   navigation?: StackNavigationProp<RootStackParamList, "Detail">;

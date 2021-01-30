@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text, SafeAreaView } from "react-native";
 import HeaderController from "../../components/HeaderController/HeaderController";
 import { useDispatch, useSelector } from "react-redux";
-import { getQuestion } from "../../store/actions/question";
-import { Subjects } from "../../store/reducers/subjectsReducer";
-import { Question } from "../../store/reducers/questionReducer";
+import { getQuestion } from "../../store/question/question.action";
+import { Subjects } from "../../store/subjects/subjects.reducer";
+import { Question } from "../../store/question/question.reducer";
 import Spinner from "../../components/Spinner/Spinner";
 import Colors from "../../constants/Colors";
 import BottomController from "../../components/BottomController/BottomController";
-import * as questionActions from "../../store/actions/question";
+import * as questionActions from "../../store/question/question.action";
 import { baseURL } from "../../secrets/constants";
 import axios, { AxiosResponse } from "axios";
 

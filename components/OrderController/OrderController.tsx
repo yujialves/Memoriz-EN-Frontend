@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Colors from "../../constants/Colors";
-import { Question } from "../../store/reducers/questionListReducer";
+import { Question } from "../../store/questionList/questionList.reducer";
 import { useDispatch, useSelector } from "react-redux";
-import * as questionListAction from "../../store/actions/questionList";
+import * as questionListAction from "../../store/questionList/questionList.action";
 
 const OrderController: React.FC = () => {
   const dispatch = useDispatch();

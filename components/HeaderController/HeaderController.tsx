@@ -3,9 +3,9 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../../constants/Colors";
 import { useDispatch, useSelector } from "react-redux";
-import * as subjectsActions from "../../store/actions/subjects";
-import * as startActions from "../../store/actions/start";
-import * as questionActions from "../../store/actions/question";
+import * as subjectsActions from "../../store/subjects/subjects.action";
+import * as startActions from "../../store/start/start.action";
+import * as questionActions from "../../store/question/question.action";
 
 type Props = {
   subject: string;

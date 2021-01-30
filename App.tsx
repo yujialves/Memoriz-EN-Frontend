@@ -4,12 +4,14 @@ import InitNavigation from "./navigations/InitNavigation/InitNavigation";
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import ReduxThunk from "redux-thunk";
-import subjectsReducer from "./store/reducers/subjectsReducer";
-import startReducer from "./store/reducers/startReducer";
-import questionReducer from "./store/reducers/questionReducer";
-import loadingsReducer from "./store/reducers/loadingsReducer";
-import authReducer from "./store/reducers/authReducer";
-import questionListReducer from "./store/reducers/questionListReducer";
+import createSagaMiddleware from "redux-saga";
+import rootSaga from "./store/root.saga";
+import subjectsReducer from "./store/subjects/subjects.reducer";
+import startReducer from "./store/start/start.reducer";
+import questionReducer from "./store/question/question.reducer";
+import loadingsReducer from "./store/loadings/loadings.reducer";
+import authReducer from "./store/auth/auth.reducer";
+import questionListReducer from "./store/questionList/questionList.reducer";
 
 const rootReducer = combineReducers({
   subjects: subjectsReducer,
@@ -19,7 +21,9 @@ const rootReducer = combineReducers({
   auth: authReducer,
   questionList: questionListReducer,
 });
-const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
+const sagaMiddleware = createSagaMiddleware();
+const store = createStore(rootReducer, applyMiddleware(ReduxThunk, sagaMiddleware));
+sagaMiddleware.run(rootSaga);
 
 export default function App() {
   return (

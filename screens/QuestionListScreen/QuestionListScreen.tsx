@@ -10,12 +10,12 @@ import {
 } from "react-native";
 import Colors from "../../constants/Colors";
 import { useDispatch, useSelector } from "react-redux";
-import * as questionListAction from "../../store/actions/questionList";
+import * as questionListAction from "../../store/questionList/questionList.action";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigations/HomeNavigation/HomeNavigation";
 import { RouteProp } from "@react-navigation/native";
 import Spinner from "../../components/Spinner/Spinner";
-import { Question } from "../../store/reducers/questionListReducer";
+import { Question } from "../../store/questionList/questionList.reducer";
 import { Divider } from "react-native-elements";
 import OrderController from "../../components/OrderController/OrderController";
 

@@ -1,9 +1,9 @@
-import { Question } from "../reducers/questionListReducer";
-import * as actionTypes from "./actionTypes";
+import { Question } from "./questionList.reducer";
+import * as actionTypes from "./questionList.type";
 import axios from "axios";
 import { baseURL } from "../../secrets/constants";
 import { Dispatch } from "redux";
-import * as loadingsActions from "./loadings";
+import * as loadingsActions from "../loadings/loadings.action";
 
 type ResponseData = {
   data: { questionList: Question[] };

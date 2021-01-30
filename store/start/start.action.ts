@@ -1,4 +1,4 @@
-import * as actionTypes from "./actionTypes";
+import * as actionTypes from "./start.type";
 
 export const setStarted = (started: boolean, subjectId: number) => {
   return {

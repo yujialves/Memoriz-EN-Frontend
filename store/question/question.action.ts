@@ -1,9 +1,9 @@
-import * as actionTypes from "./actionTypes";
+import * as actionTypes from "./question.type";
 import axios from "axios";
 import { baseURL } from "../../secrets/constants";
 import { Dispatch } from "redux";
-import { Question } from "../reducers/questionReducer";
-import * as loadingsActions from "./loadings";
+import { Question } from "./question.reducer";
+import * as loadingsActions from "../loadings/loadings.action";
 
 type Response = {
   status: number;
@@ -94,12 +94,6 @@ export const getQuestion = (subjectId: number, token: string) => {
     );
   };
 };
-
-export const getSound = (word: string) => {
-  return async (dispatch: Dispatch) => {
-    
-  }
-}
 
 export const setQuestion = (question: Question) => {
   return {

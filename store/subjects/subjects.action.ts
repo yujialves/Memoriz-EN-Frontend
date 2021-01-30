@@ -1,7 +1,7 @@
-import * as actionTypes from "./actionTypes";
+import * as actionTypes from "./subjects.type";
 import axios from "axios";
 import { baseURL } from "../../secrets/constants";
-import { Subjects } from "../reducers/subjectsReducer";
+import { Subjects } from "./subjects.reducer";
 import { Dispatch } from "redux";
 
 type Response = {
