@@ -13,6 +13,38 @@ export const loadBingSource = (
   };
 };
 
+export const fetchBingSource = (
+  id: number,
+  word: string,
+  audioContext: AudioContext,
+  setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
+  setFailedToLoad: (value: React.SetStateAction<boolean>) => void
+) => {
+  return {
+    type: bingTypes.FETCH_BING_SOURCE,
+    id,
+    word,
+    audioContext,
+    setAudioBuffer,
+    setFailedToLoad,
+  };
+};
+
+export const decodeAudioData = (
+  buffer: ArrayBuffer,
+  audioContext: AudioContext,
+  setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
+  setFailedToLoad: (value: React.SetStateAction<boolean>) => void
+) => {
+  return {
+    type: bingTypes.DECODE_AUDIO_DATA,
+    buffer,
+    audioContext,
+    setAudioBuffer,
+    setFailedToLoad,
+  };
+};
+
 export const clearAudioInfos = () => {
   return {
     type: bingTypes.CLEAR_AUDIO_INFOS,

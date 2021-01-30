@@ -5,5 +5,7 @@ import * as bingSagas from "../store/bing/bing.saga";
 export default function* rootSaga() {
   yield all([
     takeLatest(bingTypes.LOAD_BING_SOURCE, bingSagas.loadBingSourceSaga),
+    takeLatest(bingTypes.FETCH_BING_SOURCE, bingSagas.fetchBingSourceSaga),
+    takeLatest(bingTypes.DECODE_AUDIO_DATA, bingSagas.decodeAudioDataSaga)
   ]);
 }

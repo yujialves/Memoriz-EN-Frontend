@@ -1,12 +1,17 @@
 import axios from "axios";
-import { call, fork, select } from "redux-saga/effects";
+import { call, fork, put, select, take } from "redux-saga/effects";
 import { baseURL } from "../../secrets/constants";
 import { Question } from "../question/question.reducer";
+import { channel } from "redux-saga";
+import * as bingActions from "./bing.action";
 
 type AudioInfo = {
   word: string;
   buffer: ArrayBuffer;
 };
+
+const fetchChannel = channel();
+const decodeChannel = channel();
 
 export function* loadBingSourceSaga(action: {
   type: string;
@@ -61,22 +66,24 @@ export function* loadBingSourceSaga(action: {
           console.log(audioInfo);
           if (audioInfo == undefined) {
             // サーバからフェッチ
-            fork(
-              fetchBingSourceSaga,
-              question.id,
-              word,
-              action.audioContext,
-              action.setAudioBuffer,
-              action.setFailedToLoad
+            fetchChannel.put(
+              bingActions.fetchBingSource(
+                question.id,
+                word,
+                action.audioContext,
+                action.setAudioBuffer,
+                action.setFailedToLoad
+              )
             );
           } else {
             // デコード
-            fork(
-              decodeAudioData,
-              audioInfo.buffer,
-              action.audioContext,
-              action.setAudioBuffer,
-              action.setFailedToLoad
+            decodeChannel.put(
+              bingActions.decodeAudioData(
+                audioInfo.buffer,
+                action.audioContext,
+                action.setAudioBuffer,
+                action.setFailedToLoad
+              )
             );
           }
         };
@@ -85,13 +92,14 @@ export function* loadBingSourceSaga(action: {
         getReq.onerror = () => {
           console.log("getReq.onerror");
           // サーバからフェッチ
-          fork(
-            fetchBingSourceSaga,
-            question.id,
-            word,
-            action.audioContext,
-            action.setAudioBuffer,
-            action.setFailedToLoad
+          fetchChannel.put(
+            bingActions.fetchBingSource(
+              question.id,
+              word,
+              action.audioContext,
+              action.setAudioBuffer,
+              action.setFailedToLoad
+            )
           );
         };
 
@@ -104,13 +112,14 @@ export function* loadBingSourceSaga(action: {
       } catch (err) {
         console.log(err);
         // objectStoreが作成されていなければ
-        fork(
-          fetchBingSourceSaga,
-          question.id,
-          word,
-          action.audioContext,
-          action.setAudioBuffer,
-          action.setFailedToLoad
+        fetchChannel.put(
+          bingActions.fetchBingSource(
+            question.id,
+            word,
+            action.audioContext,
+            action.setAudioBuffer,
+            action.setFailedToLoad
+          )
         );
       }
     });
@@ -118,25 +127,27 @@ export function* loadBingSourceSaga(action: {
     // 接続失敗時
     yield (request.onerror = (event) => {
       console.log("Database error: " + (<IDBRequest>event.target).error);
-      fork(
-        fetchBingSourceSaga,
-        question.id,
-        word,
-        action.audioContext,
-        action.setAudioBuffer,
-        action.setFailedToLoad
+      fetchChannel.put(
+        bingActions.fetchBingSource(
+          question.id,
+          word,
+          action.audioContext,
+          action.setAudioBuffer,
+          action.setFailedToLoad
+        )
       );
     });
   }
 }
 
-function* fetchBingSourceSaga(
-  id: number,
-  word: string,
-  audioContext: AudioContext,
-  setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
-  setFailedToLoad: (value: React.SetStateAction<boolean>) => void
-) {
+export function* fetchBingSourceSaga(action: {
+  type: string;
+  id: number;
+  word: string;
+  audioContext: AudioContext;
+  setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void;
+  setFailedToLoad: (value: React.SetStateAction<boolean>) => void;
+}) {
   const token: string = yield select(
     (state: { auth: { token: string } }) => state.auth.token
   );
@@ -147,8 +158,8 @@ function* fetchBingSourceSaga(
       .post(
         baseURL + "question/bing",
         {
-          id,
-          word,
+          id: action.id,
+          word: action.word,
         },
         {
           responseType: "arraybuffer",
@@ -172,40 +183,42 @@ function* fetchBingSourceSaga(
   if (status === 200) {
     const buffer: ArrayBuffer = data;
     // 音声を保存
-    yield fork(storeAudioInfo, word, buffer);
+    yield fork(storeAudioInfo, action.word, buffer);
     // デコード
-    yield fork(
-      decodeAudioData,
-      buffer,
-      audioContext,
-      setAudioBuffer,
-      setFailedToLoad
+    yield put(
+      bingActions.decodeAudioData(
+        buffer,
+        action.audioContext,
+        action.setAudioBuffer,
+        action.setFailedToLoad
+      )
     );
   } else {
-    yield setFailedToLoad(true);
+    yield action.setFailedToLoad(true);
   }
 }
 
-function* decodeAudioData(
-  buffer: ArrayBuffer,
-  audioContext: AudioContext,
-  setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
-  setFailedToLoad: (value: React.SetStateAction<boolean>) => void
-) {
+export function* decodeAudioDataSaga(action: {
+  type: string;
+  buffer: ArrayBuffer;
+  audioContext: AudioContext;
+  setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void;
+  setFailedToLoad: (value: React.SetStateAction<boolean>) => void;
+}) {
   console.log("decode");
-  console.log(buffer);
+  console.log(action.buffer);
   try {
-    audioContext.decodeAudioData(
-      buffer,
+    action.audioContext.decodeAudioData(
+      action.buffer,
       (buffer) => {
-        setAudioBuffer(buffer);
+        action.setAudioBuffer(buffer);
       },
       () => {
-        setFailedToLoad(true);
+        action.setFailedToLoad(true);
       }
     );
   } catch (err) {
-    yield setFailedToLoad(true);
+    yield action.setFailedToLoad(true);
   }
 }
 
@@ -288,5 +301,19 @@ export function* clearAudioInfosSaga() {
     request.onerror = (event) => {
       console.log("Database error: " + (<IDBRequest>event.target).error);
     };
+  }
+}
+
+export function* watchFetchChannel() {
+  while (true) {
+    const action = yield take(fetchChannel);
+    yield put(action);
+  }
+}
+
+export function* watchDecodeChannel() {
+  while (true) {
+    const action = yield take(decodeChannel);
+    yield put(action);
   }
 }
