@@ -1,58 +1,12 @@
 import axios from "axios";
-import { call, fork, put, select, take } from "redux-saga/effects";
+import { call, fork, put, select } from "redux-saga/effects";
 import { baseURL } from "../../secrets/constants";
 import { Question } from "../question/question.reducer";
-import { channel } from "redux-saga";
 import * as bingActions from "./bing.action";
 
 type AudioInfo = {
   word: string;
   buffer: ArrayBuffer;
-};
-
-const fetchChannel = channel();
-const decodeChannel = channel();
-
-const requestOnSuccess = (request: IDBOpenDBRequest) => {
-  return new Promise((resolve) => {
-    request.onsuccess = resolve;
-  });
-};
-
-const requestOnError = (request: IDBOpenDBRequest) => {
-  return new Promise((resolve) => {
-    request.onerror = resolve;
-  });
-};
-
-const requestOnUpgradeNeeded = (request: IDBOpenDBRequest) => {
-  return new Promise((resolve) => {
-    request.onupgradeneeded = resolve;
-  });
-};
-
-const getReqOnsuccess = (getReq: IDBRequest<any>) => {
-  return new Promise((resolve) => {
-    getReq.onsuccess = resolve;
-  });
-};
-
-const getReqOnerror = (getReq: IDBRequest<any>) => {
-  return new Promise((resolve) => {
-    getReq.onerror = resolve;
-  });
-};
-
-const putReqOnsuccess = (putReq: IDBRequest<IDBValidKey>) => {
-  return new Promise((resolve) => {
-    putReq.onsuccess = resolve;
-  });
-};
-
-const transOnComplete = (trans: IDBTransaction) => {
-  return new Promise((resolve) => {
-    trans.oncomplete = resolve;
-  });
 };
 
 export function* loadBingSourceSaga(action: {
@@ -286,7 +240,9 @@ function* storeAudioInfo(word: string, buffer: ArrayBuffer) {
     const request: IDBOpenDBRequest = yield db.open("memoriz-en", 1);
 
     // 初期化処理
+    console.log("reqUpgradeEvent前");
     const reqUpgradeEvent = yield call(requestOnUpgradeNeeded, request);
+    console.log("reqUpgradeEvent", reqUpgradeEvent);
     if (reqUpgradeEvent) {
       console.log("request.onupgradeneeded");
 
@@ -367,20 +323,44 @@ export function* clearAudioInfosSaga() {
   }
 }
 
-export function* watchFetchChannel() {
-  console.log("fetchChannel");
-  while (true) {
-    const action = yield take(fetchChannel);
-    console.log("put fetch");
-    yield put(action);
-  }
-}
+const requestOnSuccess = (request: IDBOpenDBRequest) => {
+  return new Promise((resolve) => {
+    request.onsuccess = resolve;
+  });
+};
 
-export function* watchDecodeChannel() {
-  console.log("decodeChannel");
-  while (true) {
-    const action = yield take(decodeChannel);
-    console.log("put decode");
-    yield put(action);
-  }
-}
+const requestOnError = (request: IDBOpenDBRequest) => {
+  return new Promise((resolve) => {
+    request.onerror = resolve;
+  });
+};
+
+const requestOnUpgradeNeeded = (request: IDBOpenDBRequest) => {
+  return new Promise((resolve) => {
+    request.onupgradeneeded = resolve;
+  });
+};
+
+const getReqOnsuccess = (getReq: IDBRequest<any>) => {
+  return new Promise((resolve) => {
+    getReq.onsuccess = resolve;
+  });
+};
+
+const getReqOnerror = (getReq: IDBRequest<any>) => {
+  return new Promise((resolve) => {
+    getReq.onerror = resolve;
+  });
+};
+
+const putReqOnsuccess = (putReq: IDBRequest<IDBValidKey>) => {
+  return new Promise((resolve) => {
+    putReq.onsuccess = resolve;
+  });
+};
+
+const transOnComplete = (trans: IDBTransaction) => {
+  return new Promise((resolve) => {
+    trans.oncomplete = resolve;
+  });
+};
