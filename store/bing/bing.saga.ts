@@ -13,6 +13,30 @@ type AudioInfo = {
 const fetchChannel = channel();
 const decodeChannel = channel();
 
+const requestOnSuccess = (request: IDBOpenDBRequest) => {
+  return new Promise((resolve) => {
+    request.onsuccess = resolve;
+  });
+};
+
+const requestOnError = (request: IDBOpenDBRequest) => {
+  return new Promise((resolve) => {
+    request.onerror = resolve;
+  });
+};
+
+const getReqOnsuccess = (getReq: IDBRequest<any>) => {
+  return new Promise((resolve) => {
+    getReq.onsuccess = resolve;
+  });
+};
+
+const getReqOnerror = (getReq: IDBRequest<any>) => {
+  return new Promise((resolve) => {
+    getReq.onerror = resolve;
+  });
+};
+
 export function* loadBingSourceSaga(action: {
   type: string;
   audioContext: AudioContext;
@@ -44,29 +68,31 @@ export function* loadBingSourceSaga(action: {
     const request: IDBOpenDBRequest = yield db.open("memoriz-en", 1);
 
     // 接続成功時
-    yield (request.onsuccess = (event) => {
+    const reqSuccessEvent = yield call(requestOnSuccess, request);
+    console.log("reqEvent", reqSuccessEvent);
+    if (reqSuccessEvent) {
       try {
         console.log("request.onsuccess");
-        const db: IDBDatabase = (<IDBRequest>event.target).result;
-        console.log(db);
-        const trans = db.transaction("audioInfos", "readwrite");
-        console.log(trans);
-        const store = trans.objectStore("audioInfos");
-        console.log(store);
-        const getReq = store.get(word);
-        console.log(getReq);
+        const db: IDBDatabase = yield (<IDBRequest>reqSuccessEvent.target)
+          .result;
+        const trans: IDBTransaction = yield db.transaction(
+          "audioInfos",
+          "readwrite"
+        );
+        const store: IDBObjectStore = yield trans.objectStore("audioInfos");
+        const getReq: IDBRequest<any> = yield store.get(word);
 
         // リクエスト成功したら
-        getReq.onsuccess = (event) => {
+        const getReqSuccessEvent = yield call(getReqOnsuccess, getReq);
+        if (getReqSuccessEvent) {
           console.log("getReq.onsuccess");
-          const audioInfo = (<IDBRequest>event.target).result as
-            | AudioInfo
-            | undefined;
+          const audioInfo = (yield (<IDBRequest>getReqSuccessEvent.target)
+            .result) as AudioInfo | undefined;
           // 音声が保存されていなければ
           console.log(audioInfo);
           if (audioInfo == undefined) {
             // サーバからフェッチ
-            fetchChannel.put(
+            yield put(
               bingActions.fetchBingSource(
                 question.id,
                 word,
@@ -77,7 +103,7 @@ export function* loadBingSourceSaga(action: {
             );
           } else {
             // デコード
-            decodeChannel.put(
+            yield put(
               bingActions.decodeAudioData(
                 audioInfo.buffer,
                 action.audioContext,
@@ -86,13 +112,14 @@ export function* loadBingSourceSaga(action: {
               )
             );
           }
-        };
+        }
 
         // エラーが起きたら
-        getReq.onerror = () => {
+        const getReqErrerEvent = yield call(getReqOnerror, getReq);
+        if (getReqErrerEvent) {
           console.log("getReq.onerror");
           // サーバからフェッチ
-          fetchChannel.put(
+          yield put(
             bingActions.fetchBingSource(
               question.id,
               word,
@@ -101,7 +128,7 @@ export function* loadBingSourceSaga(action: {
               action.setFailedToLoad
             )
           );
-        };
+        }
 
         trans.oncomplete = () => {
           console.log("トランザクション終了");
@@ -112,7 +139,7 @@ export function* loadBingSourceSaga(action: {
       } catch (err) {
         console.log(err);
         // objectStoreが作成されていなければ
-        fetchChannel.put(
+        yield put(
           bingActions.fetchBingSource(
             question.id,
             word,
@@ -121,13 +148,17 @@ export function* loadBingSourceSaga(action: {
             action.setFailedToLoad
           )
         );
+        console.log("putしたー");
       }
-    });
+    }
 
     // 接続失敗時
-    yield (request.onerror = (event) => {
-      console.log("Database error: " + (<IDBRequest>event.target).error);
-      fetchChannel.put(
+    const reqErrorEvent = yield call(requestOnError, request);
+    if (reqErrorEvent) {
+      console.log(
+        "Database error: " + (<IDBRequest>reqErrorEvent.target).error
+      );
+      yield put(
         bingActions.fetchBingSource(
           question.id,
           word,
@@ -136,7 +167,7 @@ export function* loadBingSourceSaga(action: {
           action.setFailedToLoad
         )
       );
-    });
+    }
   }
 }
 
@@ -249,12 +280,19 @@ function* storeAudioInfo(word: string, buffer: ArrayBuffer) {
     };
 
     // 接続成功時
-    request.onsuccess = (event) => {
+    const reqSuccessEvent = yield call(requestOnSuccess, request);
+    if (reqSuccessEvent) {
       console.log("request.onsuccess");
-      const db: IDBDatabase = (<IDBRequest>event.target).result;
-      const trans = db.transaction("audioInfos", "readwrite");
-      const store = trans.objectStore("audioInfos");
-      const putReq = store.put({ word: word, buffer: buffer });
+      const db: IDBDatabase = yield (<IDBRequest>reqSuccessEvent.target).result;
+      const trans: IDBTransaction = yield db.transaction(
+        "audioInfos",
+        "readwrite"
+      );
+      const store: IDBObjectStore = yield trans.objectStore("audioInfos");
+      const putReq: IDBRequest<IDBValidKey> = yield store.put({
+        word: word,
+        buffer: buffer,
+      });
 
       putReq.onsuccess = () => {
         console.log("保存成功");
@@ -265,12 +303,15 @@ function* storeAudioInfo(word: string, buffer: ArrayBuffer) {
       };
 
       db.close();
-    };
+    }
 
     // 接続失敗時
-    request.onerror = (event) => {
-      console.log("Database error: " + (<IDBRequest>event.target).error);
-    };
+    const reqErrorEvent = yield call(requestOnError, request);
+    if (reqErrorEvent) {
+      console.log(
+        "Database error: " + (<IDBRequest>reqErrorEvent.target).error
+      );
+    }
   }
 }
 
