@@ -1,13 +1,17 @@
 import axios from "axios";
-import { call, fork, put, select } from "redux-saga/effects";
+import { call, fork, put, select, take } from "redux-saga/effects";
 import { baseURL } from "../../secrets/constants";
 import { Question } from "../question/question.reducer";
+import { channel } from "redux-saga";
 import * as bingActions from "./bing.action";
 
 type AudioInfo = {
   word: string;
   buffer: string;
 };
+
+const fetchChannel = channel();
+const decodeChannel = channel();
 
 export function* loadBingSourceSaga(action: {
   type: string;
@@ -40,47 +44,42 @@ export function* loadBingSourceSaga(action: {
     const request: IDBOpenDBRequest = yield db.open("memoriz-en", 1);
 
     // 初期化処理
-    console.log("reqUpgradeEvent前");
-    const reqUpgradeEvent = yield call(requestOnUpgradeNeeded, request);
-    console.log("reqUpgradeEvent", reqUpgradeEvent);
-    if (reqUpgradeEvent) {
+    request.onupgradeneeded = (event) => {
       console.log("request.onupgradeneeded");
 
-      const db: IDBDatabase = yield (<IDBRequest>reqUpgradeEvent.target).result;
+      const db: IDBDatabase = (<IDBRequest>event.target).result;
       if (!db.objectStoreNames.contains("audioInfos")) {
         console.log("createstore");
-        const store: IDBObjectStore = yield db.createObjectStore("audioInfos", {
+        const store: IDBObjectStore = db.createObjectStore("audioInfos", {
           keyPath: "word",
         });
       }
-    }
+    };
 
     // 接続成功時
-    const reqSuccessEvent = yield call(requestOnSuccess, request);
-    console.log("reqEvent", reqSuccessEvent);
-    if (reqSuccessEvent) {
+    yield (request.onsuccess = (event) => {
       try {
         console.log("request.onsuccess");
-        const db: IDBDatabase = yield (<IDBRequest>reqSuccessEvent.target)
-          .result;
-        const trans: IDBTransaction = yield db.transaction(
-          "audioInfos",
-          "readwrite"
-        );
-        const store: IDBObjectStore = yield trans.objectStore("audioInfos");
-        const getReq: IDBRequest<any> = yield store.get(word);
+        const db: IDBDatabase = (<IDBRequest>event.target).result;
+        console.log(db);
+        const trans = db.transaction("audioInfos", "readwrite");
+        console.log(trans);
+        const store = trans.objectStore("audioInfos");
+        console.log(store);
+        const getReq = store.get(word);
+        console.log(getReq);
 
         // リクエスト成功したら
-        const getReqSuccessEvent = yield call(getReqOnsuccess, getReq);
-        if (getReqSuccessEvent) {
+        getReq.onsuccess = (event) => {
           console.log("getReq.onsuccess");
-          const audioInfo = (yield (<IDBRequest>getReqSuccessEvent.target)
-            .result) as AudioInfo | undefined;
+          const audioInfo = (<IDBRequest>event.target).result as
+            | AudioInfo
+            | undefined;
           // 音声が保存されていなければ
           console.log(audioInfo);
           if (audioInfo == undefined) {
             // サーバからフェッチ
-            yield put(
+            fetchChannel.put(
               bingActions.fetchBingSource(
                 question.id,
                 word,
@@ -91,7 +90,7 @@ export function* loadBingSourceSaga(action: {
             );
           } else {
             // デコード
-            yield put(
+            decodeChannel.put(
               bingActions.decodeAudioData(
                 JSON.parse(audioInfo.buffer),
                 action.audioContext,
@@ -100,14 +99,13 @@ export function* loadBingSourceSaga(action: {
               )
             );
           }
-        }
+        };
 
         // エラーが起きたら
-        const getReqErrerEvent = yield call(getReqOnerror, getReq);
-        if (getReqErrerEvent) {
+        getReq.onerror = () => {
           console.log("getReq.onerror");
           // サーバからフェッチ
-          yield put(
+          fetchChannel.put(
             bingActions.fetchBingSource(
               question.id,
               word,
@@ -116,19 +114,18 @@ export function* loadBingSourceSaga(action: {
               action.setFailedToLoad
             )
           );
-        }
+        };
 
-        const transCompleteEvent = yield call(transOnComplete, trans);
-        if (transCompleteEvent) {
+        trans.oncomplete = () => {
           console.log("トランザクション終了");
-        }
+        };
 
         db.close();
         console.log("クローズ");
       } catch (err) {
         console.log(err);
         // objectStoreが作成されていなければ
-        yield put(
+        fetchChannel.put(
           bingActions.fetchBingSource(
             question.id,
             word,
@@ -137,17 +134,13 @@ export function* loadBingSourceSaga(action: {
             action.setFailedToLoad
           )
         );
-        console.log("putしたー");
       }
-    }
+    });
 
     // 接続失敗時
-    const reqErrorEvent = yield call(requestOnError, request);
-    if (reqErrorEvent) {
-      console.log(
-        "Database error: " + (<IDBRequest>reqErrorEvent.target).error
-      );
-      yield put(
+    yield (request.onerror = (event) => {
+      console.log("Database error: " + (<IDBRequest>event.target).error);
+      fetchChannel.put(
         bingActions.fetchBingSource(
           question.id,
           word,
@@ -156,7 +149,7 @@ export function* loadBingSourceSaga(action: {
           action.setFailedToLoad
         )
       );
-    }
+    });
   }
 }
 
@@ -256,40 +249,28 @@ function* storeAudioInfo(word: string, buffer: ArrayBuffer) {
     const request: IDBOpenDBRequest = yield db.open("memoriz-en", 1);
 
     // 接続成功時
-    const reqSuccessEvent = yield call(requestOnSuccess, request);
-    if (reqSuccessEvent) {
+    request.onsuccess = (event) => {
       console.log("request.onsuccess");
-      const db: IDBDatabase = yield (<IDBRequest>reqSuccessEvent.target).result;
-      const trans: IDBTransaction = yield db.transaction(
-        "audioInfos",
-        "readwrite"
-      );
-      const store: IDBObjectStore = yield trans.objectStore("audioInfos");
-      const putReq: IDBRequest<IDBValidKey> = yield store.put({
-        word: word,
-        buffer: JSON.stringify(buffer),
-      });
+      const db: IDBDatabase = (<IDBRequest>event.target).result;
+      const trans = db.transaction("audioInfos", "readwrite");
+      const store = trans.objectStore("audioInfos");
+      const putReq = store.put({ word: word, buffer: JSON.stringify(buffer) });
 
-      const putReqSuccessEvent = yield call(putReqOnsuccess, putReq);
-      if (putReqSuccessEvent) {
+      putReq.onsuccess = () => {
         console.log("保存成功");
-      }
+      };
 
-      const transCompleteEvent = yield call(transOnComplete, trans);
-      if (transCompleteEvent) {
+      trans.oncomplete = () => {
         console.log("トランザクション終了");
-      }
+      };
 
       db.close();
-    }
+    };
 
     // 接続失敗時
-    const reqErrorEvent = yield call(requestOnError, request);
-    if (reqErrorEvent) {
-      console.log(
-        "Database error: " + (<IDBRequest>reqErrorEvent.target).error
-      );
-    }
+    request.onerror = (event) => {
+      console.log("Database error: " + (<IDBRequest>event.target).error);
+    };
   }
 }
 
@@ -323,44 +304,20 @@ export function* clearAudioInfosSaga() {
   }
 }
 
-const requestOnSuccess = (request: IDBOpenDBRequest) => {
-  return new Promise((resolve) => {
-    request.onsuccess = resolve;
-  });
-};
+export function* watchFetchChannel() {
+  console.log("fetchChannel");
+  while (true) {
+    const action = yield take(fetchChannel);
+    console.log("put fetch");
+    yield put(action);
+  }
+}
 
-const requestOnError = (request: IDBOpenDBRequest) => {
-  return new Promise((resolve) => {
-    request.onerror = resolve;
-  });
-};
-
-const requestOnUpgradeNeeded = (request: IDBOpenDBRequest) => {
-  return new Promise((resolve) => {
-    request.onupgradeneeded = resolve;
-  });
-};
-
-const getReqOnsuccess = (getReq: IDBRequest<any>) => {
-  return new Promise((resolve) => {
-    getReq.onsuccess = resolve;
-  });
-};
-
-const getReqOnerror = (getReq: IDBRequest<any>) => {
-  return new Promise((resolve) => {
-    getReq.onerror = resolve;
-  });
-};
-
-const putReqOnsuccess = (putReq: IDBRequest<IDBValidKey>) => {
-  return new Promise((resolve) => {
-    putReq.onsuccess = resolve;
-  });
-};
-
-const transOnComplete = (trans: IDBTransaction) => {
-  return new Promise((resolve) => {
-    trans.oncomplete = resolve;
-  });
-};
+export function* watchDecodeChannel() {
+  console.log("decodeChannel");
+  while (true) {
+    const action = yield take(decodeChannel);
+    console.log("put decode");
+    yield put(action);
+  }
+}
