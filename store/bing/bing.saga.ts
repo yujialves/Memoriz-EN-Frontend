@@ -51,7 +51,7 @@ export function* loadBingSourceSaga(action: {
   }
 }
 
-export function* fetchBingSourceSaga(
+function* fetchBingSourceSaga(
   word: string,
   audioContext: AudioContext,
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
@@ -106,7 +106,7 @@ export function* fetchBingSourceSaga(
   }
 }
 
-export function* decodeAudioData(
+function* decodeAudioData(
   buffer: ArrayBuffer,
   audioContext: AudioContext,
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,

@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import * as subjectsActions from "../../store/subjects/subjects.action";
 import * as startActions from "../../store/start/start.action";
 import * as questionActions from "../../store/question/question.action";
+import * as bingActions from "../../store/bing/bing.action";
 
 type Props = {
   subject: string;
@@ -35,6 +36,7 @@ const HeaderController: React.FC<Props> = (props) => {
         rest: 0,
       })
     );
+    dispatch(bingActions.clearAudioInfo());
     dispatch(startActions.setStarted(false, 0));
   };
 

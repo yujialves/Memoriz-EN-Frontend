@@ -10,8 +10,6 @@ import Spinner from "../../components/Spinner/Spinner";
 import Colors from "../../constants/Colors";
 import BottomController from "../../components/BottomController/BottomController";
 import * as questionActions from "../../store/question/question.action";
-import { baseURL } from "../../secrets/constants";
-import axios, { AxiosResponse } from "axios";
 
 const QuestionScreen: React.FC = () => {
   const dispatch = useDispatch();
