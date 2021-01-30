@@ -25,6 +25,12 @@ const requestOnError = (request: IDBOpenDBRequest) => {
   });
 };
 
+const requestOnUpgradeNeeded = (request: IDBOpenDBRequest) => {
+  return new Promise((resolve) => {
+    request.onupgradeneeded = resolve;
+  });
+};
+
 const getReqOnsuccess = (getReq: IDBRequest<any>) => {
   return new Promise((resolve) => {
     getReq.onsuccess = resolve;
@@ -34,6 +40,18 @@ const getReqOnsuccess = (getReq: IDBRequest<any>) => {
 const getReqOnerror = (getReq: IDBRequest<any>) => {
   return new Promise((resolve) => {
     getReq.onerror = resolve;
+  });
+};
+
+const putReqOnsuccess = (putReq: IDBRequest<IDBValidKey>) => {
+  return new Promise((resolve) => {
+    putReq.onsuccess = resolve;
+  });
+};
+
+const transOnComplete = (trans: IDBTransaction) => {
+  return new Promise((resolve) => {
+    trans.oncomplete = resolve;
   });
 };
 
@@ -130,9 +148,10 @@ export function* loadBingSourceSaga(action: {
           );
         }
 
-        trans.oncomplete = () => {
+        const transCompleteEvent = yield call(transOnComplete, trans);
+        if (transCompleteEvent) {
           console.log("トランザクション終了");
-        };
+        }
 
         db.close();
         console.log("クローズ");
@@ -267,17 +286,18 @@ function* storeAudioInfo(word: string, buffer: ArrayBuffer) {
     const request: IDBOpenDBRequest = yield db.open("memoriz-en", 1);
 
     // 初期化処理
-    request.onupgradeneeded = (event) => {
+    const reqUpgradeEvent = yield call(requestOnUpgradeNeeded, request);
+    if (reqUpgradeEvent) {
       console.log("request.onupgradeneeded");
 
-      const db: IDBDatabase = (<IDBRequest>event.target).result;
+      const db: IDBDatabase = yield (<IDBRequest>reqUpgradeEvent.target).result;
       if (!db.objectStoreNames.contains("audioInfos")) {
         console.log("createstore");
-        const store: IDBObjectStore = db.createObjectStore("audioInfos", {
+        const store: IDBObjectStore = yield db.createObjectStore("audioInfos", {
           keyPath: "word",
         });
       }
-    };
+    }
 
     // 接続成功時
     const reqSuccessEvent = yield call(requestOnSuccess, request);
@@ -294,13 +314,15 @@ function* storeAudioInfo(word: string, buffer: ArrayBuffer) {
         buffer: buffer,
       });
 
-      putReq.onsuccess = () => {
+      const putReqSuccessEvent = yield call(putReqOnsuccess, putReq);
+      if (putReqSuccessEvent) {
         console.log("保存成功");
-      };
+      }
 
-      trans.oncomplete = () => {
+      const transCompleteEvent = yield call(transOnComplete, trans);
+      if (transCompleteEvent) {
         console.log("トランザクション終了");
-      };
+      }
 
       db.close();
     }
