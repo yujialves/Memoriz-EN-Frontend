@@ -40,6 +40,13 @@ const QuestionScreen: React.FC = () => {
   useEffect(() => {
     dispatch(getQuestion(subjectId, token));
   }, [dispatch]);
+  
+  useEffect(() => {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    return () => {
+      audioContext.close();
+    };
+  });
 
   useEffect(() => {
     if (question.id === 0) return;
@@ -48,12 +55,6 @@ const QuestionScreen: React.FC = () => {
     );
   }, [question]);
 
-  useEffect(() => {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    return () => {
-      audioContext.close();
-    };
-  });
 
   const onSpeech = () => {
     const uttr = new SpeechSynthesisUtterance(
