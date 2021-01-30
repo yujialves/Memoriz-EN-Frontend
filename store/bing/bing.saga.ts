@@ -33,13 +33,14 @@ export function* loadBingSourceSaga(action: {
 
   if (!db) {
     console.log("indexedDBがサポートされていません");
+    yield action.setFailedToLoad(true);
   } else {
     console.log("request");
     const request: IDBOpenDBRequest = yield db.open("memoriz-en", 1);
 
     // 接続成功時
     yield (request.onsuccess = (event) => {
-      // try {
+      try {
         console.log("request.onsuccess");
         const db: IDBDatabase = (<IDBRequest>event.target).result;
         console.log(db);
@@ -49,8 +50,6 @@ export function* loadBingSourceSaga(action: {
         console.log(store);
         const getReq = store.get(word);
         console.log(getReq);
-
-        getReq;
 
         // リクエスト成功したら
         getReq.onsuccess = (event) => {
@@ -102,22 +101,31 @@ export function* loadBingSourceSaga(action: {
 
         db.close();
         console.log("クローズ");
-      // } catch (err) {
-      //   // objectStoreが作成されていなければ
-      //   fork(
-      //     fetchBingSourceSaga,
-      //     question.id,
-      //     word,
-      //     action.audioContext,
-      //     action.setAudioBuffer,
-      //     action.setFailedToLoad
-      //   );
-      // }
+      } catch (err) {
+        console.log(err);
+        // objectStoreが作成されていなければ
+        fork(
+          fetchBingSourceSaga,
+          question.id,
+          word,
+          action.audioContext,
+          action.setAudioBuffer,
+          action.setFailedToLoad
+        );
+      }
     });
 
     // 接続失敗時
     yield (request.onerror = (event) => {
       console.log("Database error: " + (<IDBRequest>event.target).error);
+      fork(
+        fetchBingSourceSaga,
+        question.id,
+        word,
+        action.audioContext,
+        action.setAudioBuffer,
+        action.setFailedToLoad
+      );
     });
   }
 }
@@ -132,6 +140,7 @@ function* fetchBingSourceSaga(
   const token: string = yield select(
     (state: { auth: { token: string } }) => state.auth.token
   );
+  console.log("fetchBingSourceSaga");
 
   const { status, data } = yield call(() =>
     axios
@@ -159,6 +168,7 @@ function* fetchBingSourceSaga(
         return { status, data };
       })
   );
+  console.log(status, data);
   if (status === 200) {
     const buffer: ArrayBuffer = data;
     // 音声を保存
