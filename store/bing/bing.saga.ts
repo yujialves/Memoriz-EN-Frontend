@@ -19,6 +19,9 @@ export function* loadBingSourceSaga(action: {
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void;
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void;
 }) {
+  // watcherの起動
+  yield put(bingActions.watchDecodeChannel());
+  yield put(bingActions.watchDecodeChannel());
   console.log("loadBingSourceSaga");
   // ロード失敗を初期化
   yield action.setFailedToLoad(false);
@@ -304,7 +307,7 @@ export function* clearAudioInfosSaga() {
   }
 }
 
-export function* watchFetchChannel() {
+export function* watchFetchChannelSaga() {
   console.log("fetchChannel");
   while (true) {
     const action = yield take(fetchChannel);
@@ -313,7 +316,7 @@ export function* watchFetchChannel() {
   }
 }
 
-export function* watchDecodeChannel() {
+export function* watchDecodeChannelSaga() {
   console.log("decodeChannel");
   while (true) {
     const action = yield take(decodeChannel);

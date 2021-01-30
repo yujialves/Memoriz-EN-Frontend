@@ -50,3 +50,15 @@ export const clearAudioInfos = () => {
     type: bingTypes.CLEAR_AUDIO_INFOS,
   };
 };
+
+export function watchFetchChannel() {
+  return {
+    type: bingTypes.WATCH_FETCH_CHANNEL,
+  };
+}
+
+export function watchDecodeChannel() {
+  return {
+    type: bingTypes.WATCH_DECODE_CHANNEL,
+  };
+}

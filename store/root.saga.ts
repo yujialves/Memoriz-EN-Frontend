@@ -7,6 +7,10 @@ export default function* rootSaga() {
     takeLatest(bingTypes.LOAD_BING_SOURCE, bingSagas.loadBingSourceSaga),
     takeLatest(bingTypes.FETCH_BING_SOURCE, bingSagas.fetchBingSourceSaga),
     takeLatest(bingTypes.DECODE_AUDIO_DATA, bingSagas.decodeAudioDataSaga),
+    takeLatest(bingTypes.WATCH_FETCH_CHANNEL, bingSagas.watchFetchChannelSaga),
+    takeLatest(
+      bingTypes.WATCH_DECODE_CHANNEL,
+      bingSagas.watchDecodeChannelSaga
+    ),
   ]);
-  yield [bingSagas.watchFetchChannel(), bingSagas.watchDecodeChannel()];
 }
