@@ -46,7 +46,7 @@ const QuestionScreen: React.FC = () => {
   useEffect(() => {
     if (question.id === 0) return;
     dispatch(
-      bingActions.loadFromServer(audioContext, setAudioBuffer, setFailedToLoad)
+      bingActions.loadBingSource(audioContext, setAudioBuffer, setFailedToLoad)
     );
   }, [question]);
 

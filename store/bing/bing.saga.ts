@@ -3,7 +3,7 @@ import { call, select } from "redux-saga/effects";
 import { baseURL } from "../../secrets/constants";
 import { Question } from "../question/question.reducer";
 
-export function* loadFromServerSaga(action: {
+export function* loadBingSourceSaga(action: {
   type: string;
   audioContext: AudioContext;
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void;

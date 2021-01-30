@@ -1,12 +1,22 @@
 import * as bingTypes from "./bing.type";
 
-export const loadFromServer = (
+export const storeAudioInfo = (word: string, buffer: AudioBuffer) => {
+  return {
+    type: bingTypes.STORE_AUDIO_INFO,
+    word,
+    buffer,
+  };
+};
+
+// Saga's Action
+
+export const loadBingSource = (
   audioContext: AudioContext,
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void
 ) => {
   return {
-    type: bingTypes.LOAD_FROM_SERVER,
+    type: bingTypes.LOAD_BING_SOURCE,
     audioContext,
     setAudioBuffer,
     setFailedToLoad,
