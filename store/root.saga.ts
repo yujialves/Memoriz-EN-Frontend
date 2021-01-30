@@ -8,5 +8,5 @@ export default function* rootSaga() {
     takeLatest(bingTypes.FETCH_BING_SOURCE, bingSagas.fetchBingSourceSaga),
     takeLatest(bingTypes.DECODE_AUDIO_DATA, bingSagas.decodeAudioDataSaga),
   ]);
-  yield [bingSagas.watchFetchChannel, bingSagas.watchDecodeChannel];
+  yield [bingSagas.watchFetchChannel(), bingSagas.watchDecodeChannel()];
 }
