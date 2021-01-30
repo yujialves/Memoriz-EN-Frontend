@@ -123,8 +123,9 @@ function* decodeAudioData(
         setFailedToLoad(true);
       }
     );
-  } catch {
+  } catch (err) {
     console.log("catch2");
+    console.log(err)
     yield setFailedToLoad(true);
   }
 }

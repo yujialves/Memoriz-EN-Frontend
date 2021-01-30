@@ -9,7 +9,6 @@ export const storeAudioInfo = (word: string, buffer: AudioBuffer) => {
 };
 
 export const clearAudioInfo = () => {
-  console.log("キャッシュクリア");
   return {
     type: bingTypes.CLEAR_AUDIO_INFO,
   };
