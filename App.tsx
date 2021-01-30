@@ -12,7 +12,6 @@ import questionReducer from "./store/question/question.reducer";
 import loadingsReducer from "./store/loadings/loadings.reducer";
 import authReducer from "./store/auth/auth.reducer";
 import questionListReducer from "./store/questionList/questionList.reducer";
-import bingReducer from "./store/bing/bing.reducer";
 
 const rootReducer = combineReducers({
   subjects: subjectsReducer,
@@ -21,7 +20,6 @@ const rootReducer = combineReducers({
   loadings: loadingsReducer,
   auth: authReducer,
   questionList: questionListReducer,
-  bing: bingReducer,
 });
 const sagaMiddleware = createSagaMiddleware();
 const store = createStore(

@@ -1,22 +1,5 @@
 import * as bingTypes from "./bing.type";
 
-export const storeAudioInfo = (word: string, buffer: ArrayBuffer) => {
-  console.log('store', buffer);
-  return {
-    type: bingTypes.STORE_AUDIO_INFO,
-    word,
-    buffer,
-  };
-};
-
-export const clearAudioInfo = () => {
-  return {
-    type: bingTypes.CLEAR_AUDIO_INFO,
-  };
-};
-
-// Saga's Action
-
 export const loadBingSource = (
   audioContext: AudioContext,
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
@@ -27,5 +10,11 @@ export const loadBingSource = (
     audioContext,
     setAudioBuffer,
     setFailedToLoad,
+  };
+};
+
+export const clearAudioInfos = () => {
+  return {
+    type: bingTypes.CLEAR_AUDIO_INFOS,
   };
 };

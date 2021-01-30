@@ -1,9 +1,12 @@
 import axios from "axios";
-import { call, fork, put, select } from "redux-saga/effects";
+import { call, fork, select } from "redux-saga/effects";
 import { baseURL } from "../../secrets/constants";
 import { Question } from "../question/question.reducer";
-import { AudioInfo } from "./bing.reducer";
-import * as bingAction from "./bing.action";
+
+type AudioInfo = {
+  word: string;
+  buffer: ArrayBuffer;
+};
 
 export function* loadBingSourceSaga(action: {
   type: string;
@@ -11,7 +14,7 @@ export function* loadBingSourceSaga(action: {
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void;
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void;
 }) {
-  console.log("load");
+  console.log("loadBingSourceSaga");
   // ロード失敗を初期化
   yield action.setFailedToLoad(false);
 
@@ -22,33 +25,64 @@ export function* loadBingSourceSaga(action: {
     ? question.answer
     : question.question;
 
-  // メモリーにaudioが保存されているかを確認
-  const audioInfos: AudioInfo[] = yield select(
-    (state: { bing: { audioInfos: AudioInfo[] } }) => state.bing.audioInfos
-  );
-  const matchedAudioInfos = audioInfos.filter((value) => {
-    return value.word === word;
-  });
-  // 保存されていれば
-  if (matchedAudioInfos.length > 0) {
-    // デコード
-    yield fork(
-      decodeAudioData,
-      matchedAudioInfos[0].buffer,
-      action.audioContext,
-      action.setAudioBuffer,
-      action.setFailedToLoad
-    );
+  // 音声が保存されているかを確認
+  const db: IDBFactory = yield window.indexedDB ||
+    window.mozIndexedDB ||
+    window.webkitIndexedDB ||
+    window.msIndexedDB;
+
+  if (!db) {
+    console.log("indexedDBがサポートされていません");
   } else {
-    // 保存されていなければサーバーからフェッチ
-    yield fork(
-      fetchBingSourceSaga,
-      question.id,
-      word,
-      action.audioContext,
-      action.setAudioBuffer,
-      action.setFailedToLoad
-    );
+    console.log("request");
+    const request: IDBOpenDBRequest = yield db.open("memoriz-en", 1);
+
+    // 接続成功時
+    yield (request.onsuccess = (event) => {
+      console.log("request.onsuccess");
+      const db: IDBDatabase = (<IDBRequest>event.target).result;
+      const trans = db.transaction("audioInfos", "readwrite");
+      const store = trans.objectStore("audioInfos");
+      const getReq = store.get(word);
+
+      // 保存されていれば
+      getReq.onsuccess = (event) => {
+        console.log("getReq.onsuccess");
+        const audioInfo = (<IDBRequest>event.target).result as AudioInfo;
+        // デコード
+        fork(
+          decodeAudioData,
+          audioInfo.buffer,
+          action.audioContext,
+          action.setAudioBuffer,
+          action.setFailedToLoad
+        );
+      };
+
+      // 保存されていなければ
+      getReq.onerror = () => {
+        console.log("getReq.onerror");
+        fork(
+          fetchBingSourceSaga,
+          question.id,
+          word,
+          action.audioContext,
+          action.setAudioBuffer,
+          action.setFailedToLoad
+        );
+      };
+
+      trans.oncomplete = () => {
+        console.log("トランザクション終了");
+      };
+
+      db.close();
+    });
+
+    // 接続失敗時
+    yield (request.onerror = (event) => {
+      console.log("Database error: " + (<IDBRequest>event.target).error);
+    });
   }
 }
 
@@ -59,7 +93,6 @@ function* fetchBingSourceSaga(
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void
 ) {
-  console.log("fetch");
   const token: string = yield select(
     (state: { auth: { token: string } }) => state.auth.token
   );
@@ -92,12 +125,9 @@ function* fetchBingSourceSaga(
   );
   if (status === 200) {
     const buffer: ArrayBuffer = data;
-    // 音声をメモリに保存
-    console.log("data", data);
-    console.log("fetch1", buffer);
-    yield put(bingAction.storeAudioInfo(word, buffer));
+    // 音声を保存
+    yield fork(storeAudioInfo, word, buffer);
     // デコード
-    console.log("fetch2", buffer);
     yield fork(
       decodeAudioData,
       buffer,
@@ -117,7 +147,7 @@ function* decodeAudioData(
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void
 ) {
   console.log("decode");
-  console.log("deode", buffer);
+  console.log(buffer);
   try {
     audioContext.decodeAudioData(
       buffer,
@@ -129,7 +159,86 @@ function* decodeAudioData(
       }
     );
   } catch (err) {
-    console.log(err);
     yield setFailedToLoad(true);
+  }
+}
+
+function* storeAudioInfo(word: string, buffer: ArrayBuffer) {
+  console.log("storeAudioInfo");
+  const db: IDBFactory = yield window.indexedDB ||
+    window.mozIndexedDB ||
+    window.webkitIndexedDB ||
+    window.msIndexedDB;
+
+  if (!db) {
+    console.log("indexedDBがサポートされていません");
+  } else {
+    console.log("request");
+    const request: IDBOpenDBRequest = yield db.open("memoriz-en", 1);
+
+    // 初期化処理
+    request.onupgradeneeded = (event) => {
+      console.log("request.onupgradeneeded");
+
+      const db: IDBDatabase = (<IDBRequest>event.target).result;
+      if (!db.objectStoreNames.contains("audioInfos")) {
+        console.log("createstore");
+        const store: IDBObjectStore = db.createObjectStore("audioInfos", {
+          keyPath: "word",
+        });
+      }
+    };
+
+    // 接続成功時
+    request.onsuccess = (event) => {
+      console.log("request.onsuccess");
+      const db: IDBDatabase = (<IDBRequest>event.target).result;
+      const trans = db.transaction("audioInfos", "readwrite");
+      const store = trans.objectStore("audioInfos");
+      const putReq = store.put({ word: word, buffer: buffer });
+
+      putReq.onsuccess = () => {
+        console.log("保存成功");
+      };
+
+      trans.oncomplete = () => {
+        console.log("トランザクション終了");
+      };
+
+      db.close();
+    };
+
+    // 接続失敗時
+    request.onerror = (event) => {
+      console.log("Database error: " + (<IDBRequest>event.target).error);
+    };
+  }
+}
+
+export function* clearAudioInfosSaga() {
+  console.log("clearAudioInfo");
+  const db: IDBFactory = yield window.indexedDB ||
+    window.mozIndexedDB ||
+    window.webkitIndexedDB ||
+    window.msIndexedDB;
+
+  if (!db) {
+    console.log("indexedDBがサポートされていません");
+  } else {
+    console.log("request");
+    const request: IDBOpenDBRequest = yield db.open("memoriz-en", 1);
+
+    // 接続成功時
+    request.onsuccess = (event) => {
+      console.log("request.onsuccess");
+      const db: IDBDatabase = (<IDBRequest>event.target).result;
+      db.deleteObjectStore("audioInfos");
+      db.close();
+    };
+
+    // 接続失敗時
+    request.onerror = (event) => {
+      console.log("Database error: " + (<IDBRequest>event.target).error);
+    };
   }
 }
