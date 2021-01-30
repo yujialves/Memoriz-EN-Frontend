@@ -39,7 +39,7 @@ export function* loadBingSourceSaga(action: {
 
     // 接続成功時
     yield (request.onsuccess = (event) => {
-      try {
+      // try {
         console.log("request.onsuccess");
         const db: IDBDatabase = (<IDBRequest>event.target).result;
         console.log(db);
@@ -102,17 +102,17 @@ export function* loadBingSourceSaga(action: {
 
         db.close();
         console.log("クローズ");
-      } catch (err) {
-        // objectStoreが作成されていなければ
-        fork(
-          fetchBingSourceSaga,
-          question.id,
-          word,
-          action.audioContext,
-          action.setAudioBuffer,
-          action.setFailedToLoad
-        );
-      }
+      // } catch (err) {
+      //   // objectStoreが作成されていなければ
+      //   fork(
+      //     fetchBingSourceSaga,
+      //     question.id,
+      //     word,
+      //     action.audioContext,
+      //     action.setAudioBuffer,
+      //     action.setFailedToLoad
+      //   );
+      // }
     });
 
     // 接続失敗時
