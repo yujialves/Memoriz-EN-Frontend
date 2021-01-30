@@ -39,6 +39,22 @@ export function* loadBingSourceSaga(action: {
     console.log("request");
     const request: IDBOpenDBRequest = yield db.open("memoriz-en", 1);
 
+    // 初期化処理
+    console.log("reqUpgradeEvent前");
+    const reqUpgradeEvent = yield call(requestOnUpgradeNeeded, request);
+    console.log("reqUpgradeEvent", reqUpgradeEvent);
+    if (reqUpgradeEvent) {
+      console.log("request.onupgradeneeded");
+
+      const db: IDBDatabase = yield (<IDBRequest>reqUpgradeEvent.target).result;
+      if (!db.objectStoreNames.contains("audioInfos")) {
+        console.log("createstore");
+        const store: IDBObjectStore = yield db.createObjectStore("audioInfos", {
+          keyPath: "word",
+        });
+      }
+    }
+
     // 接続成功時
     const reqSuccessEvent = yield call(requestOnSuccess, request);
     console.log("reqEvent", reqSuccessEvent);
@@ -238,22 +254,6 @@ function* storeAudioInfo(word: string, buffer: ArrayBuffer) {
   } else {
     console.log("request");
     const request: IDBOpenDBRequest = yield db.open("memoriz-en", 1);
-
-    // 初期化処理
-    console.log("reqUpgradeEvent前");
-    const reqUpgradeEvent = yield call(requestOnUpgradeNeeded, request);
-    console.log("reqUpgradeEvent", reqUpgradeEvent);
-    if (reqUpgradeEvent) {
-      console.log("request.onupgradeneeded");
-
-      const db: IDBDatabase = yield (<IDBRequest>reqUpgradeEvent.target).result;
-      if (!db.objectStoreNames.contains("audioInfos")) {
-        console.log("createstore");
-        const store: IDBObjectStore = yield db.createObjectStore("audioInfos", {
-          keyPath: "word",
-        });
-      }
-    }
 
     // 接続成功時
     const reqSuccessEvent = yield call(requestOnSuccess, request);
