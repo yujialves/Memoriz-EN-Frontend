@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getQuestion } from "../../store/question/question.action";
 import { Subjects } from "../../store/subjects/subjects.reducer";
 import { Question } from "../../store/question/question.reducer";
+import * as bingActions from "../../store/bing/bing.action";
 import Spinner from "../../components/Spinner/Spinner";
 import Colors from "../../constants/Colors";
 import BottomController from "../../components/BottomController/BottomController";
@@ -44,10 +45,9 @@ const QuestionScreen: React.FC = () => {
 
   useEffect(() => {
     if (question.id === 0) return;
-    const load = async () => {
-      await loadBingSource();
-    };
-    load();
+    dispatch(
+      bingActions.loadFromServer(audioContext, setAudioBuffer, setFailedToLoad)
+    );
   }, [question]);
 
   useEffect(() => {
@@ -56,49 +56,6 @@ const QuestionScreen: React.FC = () => {
       audioContext.close();
     };
   });
-
-  const loadBingSource = async () => {
-    setFailedToLoad(false);
-    await axios
-      .post(
-        baseURL + "question/bing",
-        JSON.stringify({
-          word: /[ぁ-んァ-ン一-龥]/.test(question.question)
-            ? question.answer
-            : question.question,
-        }),
-        {
-          responseType: "arraybuffer",
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      )
-      .then((axiosRes) => {
-        const res = axiosRes as AxiosResponse<any>;
-        if (res.status === 200) {
-          try {
-            const buffer: ArrayBuffer = res.data;
-            audioContext.decodeAudioData(
-              buffer,
-              (buffer) => {
-                setAudioBuffer(buffer);
-              },
-              () => {
-                setFailedToLoad(true);
-              }
-            );
-          } catch {
-            setFailedToLoad(true);
-          }
-        } else {
-          setFailedToLoad(true);
-        }
-      })
-      .catch(() => {
-        setFailedToLoad(true);
-      });
-  };
 
   const onSpeech = () => {
     const uttr = new SpeechSynthesisUtterance(
