@@ -22,9 +22,11 @@ const initialState = {
 const bingReducer = (state = initialState, action: Action) => {
   switch (action.type) {
     case bingTypes.STORE_AUDIO_INFO:
+      const audioInfos = [...state.audioInfos] as AudioInfo[];
+      console.log(audioInfos);
       return {
         ...state,
-        audioInfos: action.audioInfos.concat({
+        audioInfos: audioInfos.concat({
           word: action.word,
           buffer: action.buffer as ArrayBuffer,
         }),

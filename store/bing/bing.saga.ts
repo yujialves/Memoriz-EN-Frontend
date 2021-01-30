@@ -10,6 +10,7 @@ export function* loadBingSourceSaga(action: {
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void;
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void;
 }) {
+  console.log('load')
   // ロード失敗を初期化
   yield action.setFailedToLoad(false);
 
@@ -19,8 +20,6 @@ export function* loadBingSourceSaga(action: {
   const word = /[ぁ-んァ-ン一-龥]/.test(question.question)
     ? question.answer
     : question.question;
-  console.log("word", word);
-  console.log(action.audioContext)
 
   // メモリーにaudioが保存されているかを確認
   const audioInfos: AudioInfo[] = yield select(
@@ -29,7 +28,6 @@ export function* loadBingSourceSaga(action: {
   const matchedAudioInfos = audioInfos.filter((value) => {
     return value.word === word;
   });
-  console.log("matchedAudioInfos", matchedAudioInfos);
   // 保存されていれば
   if (matchedAudioInfos.length > 0) {
     // デコード
@@ -58,12 +56,11 @@ function* fetchBingSourceSaga(
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void
 ) {
+  console.log('fetch')
   const token: string = yield select(
     (state: { auth: { token: string } }) => state.auth.token
   );
 
-  console.log("call");
-  console.log(audioContext)
   const { status, data } = yield call(() =>
     axios
       .post(
@@ -79,19 +76,16 @@ function* fetchBingSourceSaga(
         }
       )
       .then((res) => {
-        console.log("then");
         const status = res.status;
         const data = res.data;
         return { status, data };
       })
       .catch((error) => {
-        console.log("catch");
         const status = error.response.status;
         const data = error.response.data;
         return { status, data };
       })
   );
-  console.log(status, data);
   if (status === 200) {
     const buffer: ArrayBuffer = data;
     // デコード
@@ -103,7 +97,6 @@ function* fetchBingSourceSaga(
       setFailedToLoad
     );
   } else {
-    console.log("else");
     yield setFailedToLoad(true);
   }
 }
@@ -114,9 +107,8 @@ function* decodeAudioData(
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void
 ) {
+  console.log('decode')
   try {
-    console.log("try");
-    console.log(audioContext)
     audioContext.decodeAudioData(
       buffer,
       (buffer) => {
@@ -127,7 +119,6 @@ function* decodeAudioData(
       }
     );
   } catch (err) {
-    console.log("catch2");
     console.log(err)
     yield setFailedToLoad(true);
   }
