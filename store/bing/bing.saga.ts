@@ -42,9 +42,15 @@ export function* loadBingSourceSaga(action: {
       try {
         console.log("request.onsuccess");
         const db: IDBDatabase = (<IDBRequest>event.target).result;
+        console.log(db);
         const trans = db.transaction("audioInfos", "readwrite");
+        console.log(trans);
         const store = trans.objectStore("audioInfos");
+        console.log(store);
         const getReq = store.get(word);
+        console.log(getReq);
+
+        getReq;
 
         // リクエスト成功したら
         getReq.onsuccess = (event) => {
@@ -95,6 +101,7 @@ export function* loadBingSourceSaga(action: {
         };
 
         db.close();
+        console.log("クローズ");
       } catch (err) {
         // objectStoreが作成されていなければ
         fork(
