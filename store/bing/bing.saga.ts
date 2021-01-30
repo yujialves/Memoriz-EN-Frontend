@@ -1,8 +1,9 @@
 import axios, { AxiosResponse } from "axios";
-import { call, fork, select } from "redux-saga/effects";
+import { call, fork, put, select } from "redux-saga/effects";
 import { baseURL } from "../../secrets/constants";
 import { Question } from "../question/question.reducer";
 import { AudioInfo } from "./bing.reducer";
+import * as bingAction from './bing.action'
 
 export function* loadBingSourceSaga(action: {
   type: string;
@@ -96,6 +97,8 @@ function* fetchBingSourceSaga(
       setAudioBuffer,
       setFailedToLoad
     );
+    // 音声をメモリに保存
+    yield put(bingAction.storeAudioInfo(word, buffer))
   } else {
     yield setFailedToLoad(true);
   }
