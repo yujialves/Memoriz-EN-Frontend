@@ -4,6 +4,7 @@ import { baseURL } from "../../secrets/constants";
 import { Question } from "../question/question.reducer";
 import { AudioInfo } from "./bing.reducer";
 import * as bingAction from "./bing.action";
+import { arrayBufferToString, stringToArrayBuffer } from "../../utils/cast";
 
 export function* loadBingSourceSaga(action: {
   type: string;
@@ -34,7 +35,7 @@ export function* loadBingSourceSaga(action: {
     // デコード
     yield fork(
       decodeAudioData,
-      JSON.parse(matchedAudioInfos[0].buffer),
+      stringToArrayBuffer(matchedAudioInfos[0].buffer),
       action.audioContext,
       action.setAudioBuffer,
       action.setFailedToLoad
@@ -95,7 +96,8 @@ function* fetchBingSourceSaga(
     // 音声をメモリに保存
     console.log("data", data);
     console.log("fetch1", buffer);
-    yield put(bingAction.storeAudioInfo(word, JSON.stringify(buffer)));
+    console.log("serialize", arrayBufferToString(buffer));
+    yield put(bingAction.storeAudioInfo(word, arrayBufferToString(buffer)));
     // デコード
     console.log("fetch2", buffer);
     yield fork(
