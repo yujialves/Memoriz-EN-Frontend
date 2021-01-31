@@ -1,7 +1,6 @@
 import * as bingTypes from "./bing.type";
 
 export const storeAudioInfo = (word: string, buffer: string) => {
-  console.log('store', buffer);
   return {
     type: bingTypes.STORE_AUDIO_INFO,
     word,

@@ -12,7 +12,6 @@ export function* loadBingSourceSaga(action: {
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void;
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void;
 }) {
-  console.log("load");
   // ロード失敗を初期化
   yield action.setFailedToLoad(false);
 
@@ -60,7 +59,6 @@ function* fetchBingSourceSaga(
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void
 ) {
-  console.log("fetch");
   const token: string = yield select(
     (state: { auth: { token: string } }) => state.auth.token
   );
@@ -94,12 +92,8 @@ function* fetchBingSourceSaga(
   if (status === 200) {
     const buffer: ArrayBuffer = data;
     // 音声をメモリに保存
-    console.log("data", data);
-    console.log("fetch1", buffer);
-    console.log("serialize", arrayBufferToString(buffer));
     yield put(bingAction.storeAudioInfo(word, arrayBufferToString(buffer)));
     // デコード
-    console.log("fetch2", buffer);
     yield fork(
       decodeAudioData,
       buffer,
@@ -118,8 +112,6 @@ function* decodeAudioData(
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void
 ) {
-  console.log("decode");
-  console.log("deode", buffer);
   try {
     audioContext.decodeAudioData(
       buffer,
@@ -131,7 +123,6 @@ function* decodeAudioData(
       }
     );
   } catch (err) {
-    console.log(err);
     yield setFailedToLoad(true);
   }
 }
