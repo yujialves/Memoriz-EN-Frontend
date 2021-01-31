@@ -1,17 +1,9 @@
 import axios from "axios";
-import { call, fork, put, select, take } from "redux-saga/effects";
+import { call, fork, put, select } from "redux-saga/effects";
 import { baseURL } from "../../secrets/constants";
 import { Question } from "../question/question.reducer";
-import { channel } from "redux-saga";
-import * as bingActions from "./bing.action";
-
-type AudioInfo = {
-  word: string;
-  buffer: string;
-};
-
-const fetchChannel = channel();
-const decodeChannel = channel();
+import { AudioInfo } from "./bing.reducer";
+import * as bingAction from "./bing.action";
 
 export function* loadBingSourceSaga(action: {
   type: string;
@@ -19,10 +11,7 @@ export function* loadBingSourceSaga(action: {
   setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void;
   setFailedToLoad: (value: React.SetStateAction<boolean>) => void;
 }) {
-  // watcherの起動
-  yield put(bingActions.watchDecodeChannel());
-  yield put(bingActions.watchDecodeChannel());
-  console.log("loadBingSourceSaga");
+  console.log("load");
   // ロード失敗を初期化
   yield action.setFailedToLoad(false);
 
@@ -33,149 +22,55 @@ export function* loadBingSourceSaga(action: {
     ? question.answer
     : question.question;
 
-  // 音声が保存されているかを確認
-  const db: IDBFactory = yield window.indexedDB ||
-    window.mozIndexedDB ||
-    window.webkitIndexedDB ||
-    window.msIndexedDB;
-
-  if (!db) {
-    console.log("indexedDBがサポートされていません");
-    yield action.setFailedToLoad(true);
+  // メモリーにaudioが保存されているかを確認
+  const audioInfos: AudioInfo[] = yield select(
+    (state: { bing: { audioInfos: AudioInfo[] } }) => state.bing.audioInfos
+  );
+  const matchedAudioInfos = audioInfos.filter((value) => {
+    return value.word === word;
+  });
+  // 保存されていれば
+  if (matchedAudioInfos.length > 0) {
+    // デコード
+    yield fork(
+      decodeAudioData,
+      matchedAudioInfos[0].buffer,
+      action.audioContext,
+      action.setAudioBuffer,
+      action.setFailedToLoad
+    );
   } else {
-    console.log("request");
-    const request: IDBOpenDBRequest = yield db.open("memoriz-en", 1);
-
-    // 初期化処理
-    request.onupgradeneeded = (event) => {
-      console.log("request.onupgradeneeded");
-
-      const db: IDBDatabase = (<IDBRequest>event.target).result;
-      if (!db.objectStoreNames.contains("audioInfos")) {
-        console.log("createstore");
-        const store: IDBObjectStore = db.createObjectStore("audioInfos", {
-          keyPath: "word",
-        });
-      }
-    };
-
-    // 接続成功時
-    yield (request.onsuccess = (event) => {
-      try {
-        console.log("request.onsuccess");
-        const db: IDBDatabase = (<IDBRequest>event.target).result;
-        console.log(db);
-        const trans = db.transaction("audioInfos", "readwrite");
-        console.log(trans);
-        const store = trans.objectStore("audioInfos");
-        console.log(store);
-        const getReq = store.get(word);
-        console.log(getReq);
-
-        // リクエスト成功したら
-        getReq.onsuccess = (event) => {
-          console.log("getReq.onsuccess");
-          const audioInfo = (<IDBRequest>event.target).result as
-            | AudioInfo
-            | undefined;
-          // 音声が保存されていなければ
-          console.log(audioInfo);
-          if (audioInfo == undefined) {
-            // サーバからフェッチ
-            fetchChannel.put(
-              bingActions.fetchBingSource(
-                question.id,
-                word,
-                action.audioContext,
-                action.setAudioBuffer,
-                action.setFailedToLoad
-              )
-            );
-          } else {
-            // デコード
-            decodeChannel.put(
-              bingActions.decodeAudioData(
-                JSON.parse(audioInfo.buffer),
-                action.audioContext,
-                action.setAudioBuffer,
-                action.setFailedToLoad
-              )
-            );
-          }
-        };
-
-        // エラーが起きたら
-        getReq.onerror = () => {
-          console.log("getReq.onerror");
-          // サーバからフェッチ
-          fetchChannel.put(
-            bingActions.fetchBingSource(
-              question.id,
-              word,
-              action.audioContext,
-              action.setAudioBuffer,
-              action.setFailedToLoad
-            )
-          );
-        };
-
-        trans.oncomplete = () => {
-          console.log("トランザクション終了");
-        };
-
-        db.close();
-        console.log("クローズ");
-      } catch (err) {
-        console.log(err);
-        // objectStoreが作成されていなければ
-        fetchChannel.put(
-          bingActions.fetchBingSource(
-            question.id,
-            word,
-            action.audioContext,
-            action.setAudioBuffer,
-            action.setFailedToLoad
-          )
-        );
-      }
-    });
-
-    // 接続失敗時
-    yield (request.onerror = (event) => {
-      console.log("Database error: " + (<IDBRequest>event.target).error);
-      fetchChannel.put(
-        bingActions.fetchBingSource(
-          question.id,
-          word,
-          action.audioContext,
-          action.setAudioBuffer,
-          action.setFailedToLoad
-        )
-      );
-    });
+    // 保存されていなければサーバーからフェッチ
+    yield fork(
+      fetchBingSourceSaga,
+      question.id,
+      word,
+      action.audioContext,
+      action.setAudioBuffer,
+      action.setFailedToLoad
+    );
   }
 }
 
-export function* fetchBingSourceSaga(action: {
-  type: string;
-  id: number;
-  word: string;
-  audioContext: AudioContext;
-  setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void;
-  setFailedToLoad: (value: React.SetStateAction<boolean>) => void;
-}) {
+function* fetchBingSourceSaga(
+  id: number,
+  word: string,
+  audioContext: AudioContext,
+  setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
+  setFailedToLoad: (value: React.SetStateAction<boolean>) => void
+) {
+  console.log("fetch");
   const token: string = yield select(
     (state: { auth: { token: string } }) => state.auth.token
   );
-  console.log("fetchBingSourceSaga");
 
   const { status, data } = yield call(() =>
     axios
       .post(
         baseURL + "question/bing",
         {
-          id: action.id,
-          word: action.word,
+          id,
+          word,
         },
         {
           responseType: "arraybuffer",
@@ -195,132 +90,46 @@ export function* fetchBingSourceSaga(action: {
         return { status, data };
       })
   );
-  console.log(status, data);
   if (status === 200) {
     const buffer: ArrayBuffer = data;
-    // 音声を保存
-    yield fork(storeAudioInfo, action.word, buffer);
+    // 音声をメモリに保存
+    console.log("data", data);
+    console.log("fetch1", buffer);
+    yield put(bingAction.storeAudioInfo(word, buffer));
     // デコード
-    yield put(
-      bingActions.decodeAudioData(
-        buffer,
-        action.audioContext,
-        action.setAudioBuffer,
-        action.setFailedToLoad
-      )
+    console.log("fetch2", buffer);
+    yield fork(
+      decodeAudioData,
+      buffer,
+      audioContext,
+      setAudioBuffer,
+      setFailedToLoad
     );
   } else {
-    yield action.setFailedToLoad(true);
+    yield setFailedToLoad(true);
   }
 }
 
-export function* decodeAudioDataSaga(action: {
-  type: string;
-  buffer: ArrayBuffer;
-  audioContext: AudioContext;
-  setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void;
-  setFailedToLoad: (value: React.SetStateAction<boolean>) => void;
-}) {
+function* decodeAudioData(
+  buffer: ArrayBuffer,
+  audioContext: AudioContext,
+  setAudioBuffer: (value: React.SetStateAction<AudioBuffer | null>) => void,
+  setFailedToLoad: (value: React.SetStateAction<boolean>) => void
+) {
   console.log("decode");
-  console.log(action.buffer);
+  console.log("deode", buffer);
   try {
-    action.audioContext.decodeAudioData(
-      action.buffer,
+    audioContext.decodeAudioData(
+      buffer,
       (buffer) => {
-        action.setAudioBuffer(buffer);
+        setAudioBuffer(buffer);
       },
       () => {
-        action.setFailedToLoad(true);
+        setFailedToLoad(true);
       }
     );
   } catch (err) {
-    yield action.setFailedToLoad(true);
-  }
-}
-
-function* storeAudioInfo(word: string, buffer: ArrayBuffer) {
-  console.log("storeAudioInfo");
-  const db: IDBFactory = yield window.indexedDB ||
-    window.mozIndexedDB ||
-    window.webkitIndexedDB ||
-    window.msIndexedDB;
-
-  if (!db) {
-    console.log("indexedDBがサポートされていません");
-  } else {
-    console.log("request");
-    const request: IDBOpenDBRequest = yield db.open("memoriz-en", 1);
-
-    // 接続成功時
-    request.onsuccess = (event) => {
-      console.log("request.onsuccess");
-      const db: IDBDatabase = (<IDBRequest>event.target).result;
-      const trans = db.transaction("audioInfos", "readwrite");
-      const store = trans.objectStore("audioInfos");
-      const putReq = store.put({ word: word, buffer: JSON.stringify(buffer) });
-
-      putReq.onsuccess = () => {
-        console.log("保存成功");
-      };
-
-      trans.oncomplete = () => {
-        console.log("トランザクション終了");
-      };
-
-      db.close();
-    };
-
-    // 接続失敗時
-    request.onerror = (event) => {
-      console.log("Database error: " + (<IDBRequest>event.target).error);
-    };
-  }
-}
-
-export function* clearAudioInfosSaga() {
-  console.log("clearAudioInfo");
-  const db: IDBFactory = yield window.indexedDB ||
-    window.mozIndexedDB ||
-    window.webkitIndexedDB ||
-    window.msIndexedDB;
-
-  if (!db) {
-    console.log("indexedDBがサポートされていません");
-  } else {
-    console.log("request");
-    const request: IDBOpenDBRequest = yield db.open("memoriz-en", 1);
-
-    // 接続成功時
-    request.onsuccess = (event) => {
-      console.log("request.onsuccess");
-      const db: IDBDatabase = (<IDBRequest>event.target).result;
-      if (!db.objectStoreNames.contains("audioInfos")) {
-        db.deleteObjectStore("audioInfos");
-      }
-      db.close();
-    };
-
-    // 接続失敗時
-    request.onerror = (event) => {
-      console.log("Database error: " + (<IDBRequest>event.target).error);
-    };
-  }
-}
-
-export function* watchFetchChannelSaga() {
-  console.log("fetchChannel");
-  while (true) {
-    const action = yield take(fetchChannel);
-    console.log("put fetch");
-    yield put(action);
-  }
-}
-
-export function* watchDecodeChannelSaga() {
-  console.log("decodeChannel");
-  while (true) {
-    const action = yield take(decodeChannel);
-    console.log("put decode");
-    yield put(action);
+    console.log(err);
+    yield setFailedToLoad(true);
   }
 }

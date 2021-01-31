@@ -1,6 +1,6 @@
-export const CLEAR_AUDIO_INFOS = "CLEAR_AUDIO_INFOS";
+// action's type
+export const STORE_AUDIO_INFO = "STORE_AUDIO_INFO";
+export const CLEAR_AUDIO_INFO = "CLEAR_AUDIO_INFO";
+
+// saga's type
 export const LOAD_BING_SOURCE = "LOAD_BING_SOURCE";
-export const FETCH_BING_SOURCE = "FETCH_BING_SOURCE";
-export const DECODE_AUDIO_DATA = "DECODE_AUDIO_DATA";
-export const WATCH_FETCH_CHANNEL = "WATCH_FETCH_CHANNEL";
-export const WATCH_DECODE_CHANNEL = "WATCH_DECODE_CHANNEL";
