@@ -34,7 +34,7 @@ export function* loadBingSourceSaga(action: {
     // デコード
     yield fork(
       decodeAudioData,
-      matchedAudioInfos[0].buffer,
+      JSON.parse(matchedAudioInfos[0].buffer),
       action.audioContext,
       action.setAudioBuffer,
       action.setFailedToLoad
@@ -95,7 +95,7 @@ function* fetchBingSourceSaga(
     // 音声をメモリに保存
     console.log("data", data);
     console.log("fetch1", buffer);
-    yield put(bingAction.storeAudioInfo(word, buffer));
+    yield put(bingAction.storeAudioInfo(word, JSON.stringify(buffer)));
     // デコード
     console.log("fetch2", buffer);
     yield fork(
